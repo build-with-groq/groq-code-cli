@@ -1,19 +1,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 interface Config {
   groqApiKey?: string;
   defaultModel?: string;
 }
 
-const CONFIG_DIR = '.groq';
+const CONFIG_DIR = '.groq'; // In home directory
 const CONFIG_FILE = 'local-settings.json';
 
 export class ConfigManager {
   private configPath: string;
 
   constructor() {
-    this.configPath = path.join(process.cwd(), CONFIG_DIR, CONFIG_FILE);
+    const homeDir = os.homedir();
+    this.configPath = path.join(homeDir, CONFIG_DIR, CONFIG_FILE);
   }
 
   private ensureConfigDir(): void {

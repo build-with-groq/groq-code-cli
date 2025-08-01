@@ -2,14 +2,10 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import * as dotenv from 'dotenv';
 import { render } from 'ink';
 import React from 'react';
 import { Agent } from './agent.js';
 import App from '../ui/App.js';
-
-// Load environment variables
-// dotenv.config();
 
 const program = new Command();
 

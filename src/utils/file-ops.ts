@@ -50,8 +50,6 @@ export async function deleteFile(filepath: string, force: boolean = false): Prom
     const stats = await fs.promises.stat(filePath);
     
     if (!force) {
-      // In a real implementation, you'd want to use a proper prompt library
-      // For now, we'll skip the confirmation in TypeScript version
       return false;
     }
     

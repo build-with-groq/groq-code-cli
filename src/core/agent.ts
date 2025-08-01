@@ -85,11 +85,6 @@ export class Agent {
       context.push(`Error generating directory tree: ${error}`);
     }
     
-    // context.push('\n=== NOTES ===');
-    // context.push('- Use read_file tool to examine specific files');
-    // context.push('- Use search_files tool to find patterns across the codebase');
-    // context.push('- Use list_files tool to explore directories in detail');
-    
     return context.join('\n');
   }
 
