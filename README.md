@@ -23,8 +23,7 @@
 
 <br>
 
-<video src="https://github.com/user-attachments/assets/5902fd07-1882-4ee7-825b-50d627f8c96a" controls width="600"></video>
-> Demo of Groq Code CLI
+https://github.com/user-attachments/assets/5902fd07-1882-4ee7-825b-50d627f8c96a
 
 <br>
 
