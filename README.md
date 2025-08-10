@@ -59,7 +59,7 @@ npm run dev
 
 ### To Try it Out
 ```bash
-npx groq-code-cli@latest
+npm install -g groq-code-cli@latest
 ```
 
 ## Usage
