@@ -15,7 +15,7 @@ interface ApiUsage {
   total_tokens: number;
 }
 
-export function useTokenMetrics() {
+export function useTokenMetrics(mode: 'delta' | 'total' = 'total') {
   const [metrics, setMetrics] = useState<TokenMetricsState>({
     completionTokens: 0,
     startTime: null,
@@ -27,11 +27,13 @@ export function useTokenMetrics() {
 
   const completionTokensRef = useRef<number>(0);
   const pauseStartTimeRef = useRef<Date | null>(null);
+  const lastTotalRef = useRef<number>(0);
 
   // Start tracking metrics for a new agent request
   const startRequest = useCallback(() => {
     completionTokensRef.current = 0;
     pauseStartTimeRef.current = null;
+    lastTotalRef.current = 0;
     setMetrics({
       completionTokens: 0,
       startTime: new Date(),
@@ -42,14 +44,31 @@ export function useTokenMetrics() {
     });
   }, []);
 
-  // Add API usage tokens to the current request (cumulative)
+  // Add API usage tokens to the current request (cumulative or delta mode)
   const addApiTokens = useCallback((usage: ApiUsage) => {
-    completionTokensRef.current += usage.completion_tokens;
+    const tokens = usage.completion_tokens;
+    if (typeof tokens !== 'number' || tokens < 0 || !isFinite(tokens)) {
+      console.warn('Invalid completion_tokens value:', tokens);
+      return;
+    }
+    
+    let tokensToAdd: number;
+    if (mode === 'delta') {
+      // In delta mode, the API returns incremental tokens
+      tokensToAdd = tokens;
+    } else {
+      // In total mode, the API returns cumulative total
+      // We need to calculate the delta from the last total
+      tokensToAdd = tokens - lastTotalRef.current;
+      lastTotalRef.current = tokens;
+    }
+    
+    completionTokensRef.current += tokensToAdd;
     setMetrics(prev => ({
       ...prev,
       completionTokens: completionTokensRef.current,
     }));
-  }, []);
+  }, [mode]);
 
   // Pause metrics (e.g., waiting for user approval)
   const pauseMetrics = useCallback(() => {

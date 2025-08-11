@@ -39,7 +39,7 @@ export default function MessageHistory({ messages, showReasoning = true }: Messa
           </Box>
         );
         
-      case 'assistant':
+      case 'assistant': {
         const markdownElements = parseMarkdown(message.content);
         return (
           <Box key={message.id} marginBottom={1} flexDirection="column">
@@ -66,7 +66,7 @@ export default function MessageHistory({ messages, showReasoning = true }: Messa
                       {element.content}
                     </Text>
                   );
-                case 'mixed-line':
+                case 'mixed-line': {
                   const inlineElements = parseInlineElements(element.content);
                   return (
                     <Text key={index}>
@@ -84,12 +84,14 @@ export default function MessageHistory({ messages, showReasoning = true }: Messa
                       })}
                     </Text>
                   );
+                }
                 default:
                   return <Text key={index}>{element.content}</Text>;
               }
             })}
           </Box>
         );
+      }
         
       case 'system':
         return (

@@ -101,12 +101,30 @@ You can also set your API key for your current directory via environment variabl
 export GROQ_API_KEY=your_api_key_here
 ```
 
+### Project Configuration
+
+You can create a project-specific configuration file by running `/init-config` in your chat session or manually creating a `.groq/local-settings.json` file in your project root:
+
+```json
+{
+  "defaultModel": "moonshotai/kimi-k2-instruct",
+  "temperature": 0.8,
+  "systemMessage": "You are a helpful coding assistant specialized in TypeScript",
+  "excludePatterns": ["node_modules/**", ".git/**", "dist/**"],
+  "includePatterns": ["**/*.ts", "**/*.tsx"]
+}
+```
+
+Project configuration takes precedence over global configuration but can be overridden by command-line arguments.
+
 ### Available Commands
 - `/help` - Show help and available commands
 - `/login` - Login with your credentials
 - `/model` - Select your Groq model
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
+- `/init-config` - Initialize a project config file (.groq/local-settings.json) in the current directory
+- `/config` - Show current configuration (merged project and global settings)
 
 
 ## Development
@@ -134,7 +152,9 @@ groq-code-cli/
 │   │   │   ├── help.ts         # Help command
 │   │   │   ├── login.ts        # Authentication command
 │   │   │   ├── model.ts        # Model selection command
-│   │   │   └── reasoning.ts    # Reasoning toggle command
+│   │   │   ├── reasoning.ts    # Reasoning toggle command
+│   │   │   ├── init-config.ts  # Initialize project config command
+│   │   │   └── show-config.ts  # Show configuration command
 │   │   ├── base.ts             # Base command interface
 │   │   └── index.ts            # Command exports
 │   ├── core/               

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import DiffPreview from '../display/DiffPreview.js';
 import { formatToolParams } from '../../../tools/tools.js';
-import { DANGEROUS_TOOLS } from '../../../tools/tool-schemas.js';
+import { DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../../../tools/tool-schemas.js';
 
 interface PendingToolApprovalProps {
   toolName: string;
@@ -20,6 +20,11 @@ export default function PendingToolApproval({
   onApproveWithAutoSession 
 }: PendingToolApprovalProps) {
   const [selectedApprovalOption, setSelectedApprovalOption] = useState(0);
+  
+  // Determine if tool supports auto-session approval
+  const isDangerous = DANGEROUS_TOOLS.includes(toolName);
+  const requiresApproval = APPROVAL_REQUIRED_TOOLS.includes(toolName);
+  const supportsAutoSession = !isDangerous && requiresApproval && typeof onApproveWithAutoSession === 'function';
 
   // Reset selection when component mounts
   useEffect(() => {
@@ -28,8 +33,7 @@ export default function PendingToolApproval({
 
   // Handle approval input
   useInput((input, key) => {
-    const isDangerous = DANGEROUS_TOOLS.includes(toolName);
-    const maxOptions = isDangerous ? 1 : 2; // Dangerous tools only have Yes/No, others have Yes/Auto/No
+    const maxOptions = supportsAutoSession ? 2 : 1; // 0..1 for no-auto, 0..2 when auto allowed
     
     if (key.upArrow) {
       setSelectedApprovalOption(prev => Math.max(0, prev - 1));
@@ -38,9 +42,9 @@ export default function PendingToolApproval({
     } else if (key.return) {
       if (selectedApprovalOption === 0) {
         onApprove();
-      } else if (selectedApprovalOption === 1 && !isDangerous) {
+      } else if (selectedApprovalOption === 1 && supportsAutoSession) {
         // Middle option: "Yes, and don't ask again this session"
-        onApproveWithAutoSession?.();
+        onApproveWithAutoSession!();
       } else {
         // Last option: "No"
         onReject();
@@ -104,8 +108,8 @@ export default function PendingToolApproval({
             </Text>
           </Box>
           
-          {/* Show auto-approval option only for non-dangerous tools */}
-          {!DANGEROUS_TOOLS.includes(toolName) && (
+          {/* Show auto-approval option only for non-dangerous tools that support it */}
+          {supportsAutoSession && (
             <Box>
               <Text color={selectedApprovalOption === 1 ? "black" : "blue"}
                     backgroundColor={selectedApprovalOption === 1 ? "rgb(114, 159, 214)" : undefined}>
@@ -115,9 +119,9 @@ export default function PendingToolApproval({
           )}
           
           <Box>
-            <Text color={selectedApprovalOption === (DANGEROUS_TOOLS.includes(toolName) ? 1 : 2) ? "black" : "red"}
-                  backgroundColor={selectedApprovalOption === (DANGEROUS_TOOLS.includes(toolName) ? 1 : 2) ? "rgb(214, 114, 114)" : undefined}>
-              {selectedApprovalOption === (DANGEROUS_TOOLS.includes(toolName) ? 1 : 2) ? <Text bold>{">"}</Text> : "  "} No, tell Groq what to do differently (esc)
+            <Text color={selectedApprovalOption === (supportsAutoSession ? 2 : 1) ? "black" : "red"}
+                  backgroundColor={selectedApprovalOption === (supportsAutoSession ? 2 : 1) ? "rgb(214, 114, 114)" : undefined}>
+              {selectedApprovalOption === (supportsAutoSession ? 2 : 1) ? <Text bold>{">"}</Text> : "  "} No, tell Groq what to do differently (esc)
             </Text>
           </Box>
         </Box>
