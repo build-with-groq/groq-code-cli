@@ -1,8 +1,10 @@
 import Groq from 'groq-sdk';
+import type { ClientOptions } from 'groq-sdk';
 import { executeTool } from '../tools/tools.js';
 import { validateReadBeforeEdit, getReadBeforeEditError } from '../tools/validators.js';
 import { ALL_TOOL_SCHEMAS, DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../tools/tool-schemas.js';
 import { ConfigManager } from '../utils/local-settings.js';
+import { getProxyAgent, getProxyInfo } from '../utils/proxy-config.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -22,6 +24,7 @@ export class Agent {
   private sessionAutoApprove: boolean = false;
   private systemMessage: string;
   private configManager: ConfigManager;
+  private proxyOverride?: string;
   private onToolStart?: (name: string, args: Record<string, any>) => void;
   private onToolEnd?: (name: string, result: any) => void;
   private onToolApproval?: (toolName: string, toolArgs: Record<string, any>) => Promise<{ approved: boolean; autoApproveSession?: boolean }>;
@@ -37,11 +40,13 @@ export class Agent {
     model: string,
     temperature: number,
     systemMessage: string | null,
-    debug?: boolean
+    debug?: boolean,
+    proxyOverride?: string
   ) {
     this.model = model;
     this.temperature = temperature;
     this.configManager = new ConfigManager();
+    this.proxyOverride = proxyOverride;
     
     // Set debug mode
     debugEnabled = debug || false;
@@ -61,7 +66,8 @@ export class Agent {
     model: string,
     temperature: number,
     systemMessage: string | null,
-    debug?: boolean
+    debug?: boolean,
+    proxyOverride?: string
   ): Promise<Agent> {
     // Check for default model in config if model not explicitly provided
     const configManager = new ConfigManager();
@@ -72,7 +78,8 @@ export class Agent {
       selectedModel,
       temperature,
       systemMessage,
-      debug
+      debug,
+      proxyOverride
     );
     return agent;
   }
@@ -153,8 +160,23 @@ When asked about your identity, you should identify yourself as a coding assista
     debugLog('Setting API key in agent...');
     debugLog('API key provided:', apiKey ? `${apiKey.substring(0, 8)}...` : 'empty');
     this.apiKey = apiKey;
-    this.client = new Groq({ apiKey });
-    debugLog('Groq client initialized with provided API key');
+    
+    // Get proxy configuration (with override if provided)
+    const proxyAgent = getProxyAgent(this.proxyOverride);
+    const proxyInfo = getProxyInfo(this.proxyOverride);
+    
+    if (proxyInfo.enabled) {
+      debugLog(`Using ${proxyInfo.type} proxy: ${proxyInfo.url}`);
+    }
+    
+    // Initialize Groq client with proxy if available
+    const clientOptions: ClientOptions = { apiKey };
+    if (proxyAgent) {
+      clientOptions.httpAgent = proxyAgent;
+    }
+    
+    this.client = new Groq(clientOptions);
+    debugLog('Groq client initialized with provided API key' + (proxyInfo.enabled ? ' and proxy' : ''));
   }
 
   public saveApiKey(apiKey: string): void {
