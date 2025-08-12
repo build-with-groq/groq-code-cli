@@ -4,8 +4,9 @@ import { loginCommand } from './definitions/login.js';
 import { modelCommand } from './definitions/model.js';
 import { clearCommand } from './definitions/clear.js';
 import { reasoningCommand } from './definitions/reasoning.js';
+import { loadCustomCommandsFromSettings } from '../utils/custom-commands.js';
 
-const availableCommands: CommandDefinition[] = [
+const builtinCommands: CommandDefinition[] = [
   helpCommand,
   loginCommand,
   modelCommand,
@@ -14,17 +15,36 @@ const availableCommands: CommandDefinition[] = [
 ];
 
 export function getAvailableCommands(): CommandDefinition[] {
-  return [...availableCommands];
+  return [...getBuiltinCommands(), ...getCustomCommands()];
 }
 
 export function getCommandNames(): string[] {
   return getAvailableCommands().map(cmd => cmd.command);
 }
 
-export function handleSlashCommand(
-  command: string, 
+function executeCustomPrompt(
+  commandDef: CommandDefinition,
+  args: string,
   context: CommandContext
 ) {
+  const finalPrompt = commandDef.appendArgs && args 
+    ? `${commandDef.customPrompt!}\n\n${args}` 
+    : commandDef.customPrompt!;
+  
+  if (context.sendMessage) {
+    context.sendMessage(finalPrompt);
+  } else {
+    context.addMessage({
+      role: commandDef.role || 'user',
+      content: finalPrompt,
+    });
+  }
+}
+
+export async function handleSlashCommand(
+  command: string, 
+  context: CommandContext
+): Promise<boolean> {
   // Extract the command part, everything up to the first space or end of string
   const fullCommand = command.slice(1);
   const spaceIndex = fullCommand.indexOf(' ');
@@ -32,15 +52,73 @@ export function handleSlashCommand(
   
   const commandDef = getAvailableCommands().find(c => c.command === cmd);
   
-  // Add user message for the command
+  // Add user message for the command (visible audit of what ran)
   context.addMessage({
     role: 'user',
     content: command,
   });
   
-  if (commandDef) {
-    commandDef.handler(context);
+  if (!commandDef) return false;
+
+  // If it's a custom prompt command, insert its prompt (with optional args)
+  if (commandDef.customPrompt) {
+    const args = fullCommand.slice(cmd.length).trim();
+    executeCustomPrompt(commandDef, args, context);
+    return true;
   }
+
+  await commandDef.handler(context);
+  return true;
 }
 
 export { CommandDefinition, CommandContext } from './base.js';
+
+// --- Custom command loading ---
+
+function getBuiltinCommands(): CommandDefinition[] {
+  return [...builtinCommands];
+}
+
+function getCustomCommands(): CommandDefinition[] {
+  try {
+    const configs = loadCustomCommandsFromSettings();
+    const builtinNames = new Set(getBuiltinCommands().map(c => c.command));
+
+    // Normalize, drop invalid, drop any that clash with built-ins, and dedupe by command name
+    const map = new Map<string, CommandDefinition>();
+    for (const cfg of configs as any[]) {
+      const def = normalizeCustomCommand(cfg);
+      if (!def) continue;
+      if (builtinNames.has(def.command)) continue; // ignore clashes with built-ins
+      if (!map.has(def.command)) {
+        map.set(def.command, def);
+      }
+    }
+    return Array.from(map.values());
+  } catch (err) {
+    // Consider logging to help diagnose configuration issues
+    // console.debug('Failed to load custom commands:', err);
+    return [];
+  }
+}
+
+function normalizeCustomCommand(raw: any): CommandDefinition | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const cmd = String(raw.command || '').trim();
+  // Validate command name format
+  if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(cmd)) return null;
+  const description = String(raw.description || '').trim() || 'Custom command';
+  const prompt = typeof raw.customPrompt === 'string' ? raw.customPrompt : (typeof raw.prompt === 'string' ? raw.prompt : '');
+  if (!cmd || !prompt) return null;
+  const appendArgs = Boolean(raw.appendArgs);
+  const role = raw.role === 'system' ? 'system' : 'user';
+  const definition: CommandDefinition = {
+    command: cmd,
+    description,
+    handler: () => {}, // Not used for custom prompt commands
+    customPrompt: prompt,
+    appendArgs,
+    role,
+  };
+  return definition;
+}

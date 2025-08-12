@@ -103,15 +103,29 @@ export default function Chat({ agent }: ChatProps) {
       
       // Handle slash commands
       if (message.startsWith('/')) {
-        handleSlashCommand(message, {
-          addMessage,
-          clearHistory,
-          setShowLogin,
-          setShowModelSelector,
-          toggleReasoning,
-          showReasoning,
-        });
-        return;
+        try {
+          const handled = await handleSlashCommand(message, {
+            addMessage,
+            clearHistory,
+            setShowLogin,
+            setShowModelSelector,
+            toggleReasoning,
+            showReasoning,
+            sendMessage,
+          });
+          if (handled) {
+            return;
+          }
+          // Unknown slash command: fall back to sending as plain text
+          addMessage({ role: 'system', content: `Unknown command: ${message}. Try /help for available commands.` });
+          return;
+        } catch (err) {
+          addMessage({
+            role: 'system',
+            content: `Error executing command: ${err instanceof Error ? err.message : String(err)}`,
+          });
+          return;
+        }
       }
       
       // The agent will handle starting request tracking
