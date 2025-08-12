@@ -4,6 +4,7 @@ import { loginCommand } from './definitions/login.js';
 import { modelCommand } from './definitions/model.js';
 import { clearCommand } from './definitions/clear.js';
 import { reasoningCommand } from './definitions/reasoning.js';
+import { hooksCommand } from './definitions/hooks.js';
 
 const availableCommands: CommandDefinition[] = [
   helpCommand,
@@ -11,6 +12,7 @@ const availableCommands: CommandDefinition[] = [
   modelCommand,
   clearCommand,
   reasoningCommand,
+  hooksCommand,
 ];
 
 export function getAvailableCommands(): CommandDefinition[] {
@@ -29,6 +31,7 @@ export function handleSlashCommand(
   const fullCommand = command.slice(1);
   const spaceIndex = fullCommand.indexOf(' ');
   const cmd = spaceIndex > -1 ? fullCommand.substring(0, spaceIndex).toLowerCase() : fullCommand.toLowerCase();
+  const args = spaceIndex > -1 ? fullCommand.substring(spaceIndex + 1).trim() : '';
   
   const commandDef = getAvailableCommands().find(c => c.command === cmd);
   
@@ -39,7 +42,7 @@ export function handleSlashCommand(
   });
   
   if (commandDef) {
-    commandDef.handler(context);
+    commandDef.handler({ ...context, args });
   }
 }
 

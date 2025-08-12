@@ -107,6 +107,7 @@ export GROQ_API_KEY=your_api_key_here
 - `/model` - Select your Groq model
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
+- `/hooks` - Manage hooks configuration (list, enable, disable, reload, example, init)
 
 
 ## Development
@@ -222,6 +223,113 @@ export const yourCommand: CommandDefinition = {
 ```
 
 2. **Register the command** in `src/commands/index.ts` by importing it and adding to the `availableCommands` array.
+
+#### Using Hooks
+
+Hooks allow you to execute custom shell commands at specific points in the CLI's workflow. They provide deterministic control over tool execution and can be used for logging, validation, or custom processing.
+
+##### Configuration Locations
+Hooks can be configured in two locations:
+- **Global**: `~/.groq/local-settings.json` - User-wide settings for all projects
+- **Local**: `.groq/local-settings.json` - Project-specific hooks (automatically added to .gitignore)
+
+Local project hooks extend and override global user hooks. The precedence is: **Local Project > Global User**
+
+##### Available Hook Types
+- **PreToolUse** - Runs before tool execution (can block tools)
+- **PostToolUse** - Runs after tool execution completes
+- **Notification** - Triggers on notifications
+- **Stop** - Executes when the session ends
+- **SubagentStop** - Runs when subagent tasks complete
+
+##### Quick Start
+```bash
+# Initialize global hooks (applies to all projects)
+groq
+/hooks init
+
+# Initialize local project hooks
+/hooks init --local
+
+# View all configured hooks (shows global, local, and merged)
+/hooks list
+
+# View only the merged configuration
+/hooks list --merged
+
+# Disable/enable hooks
+/hooks disable
+/hooks enable
+
+# Reload hooks after editing config files
+/hooks reload
+```
+
+##### Example Global Configuration
+Add to `~/.groq/local-settings.json`:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "execute_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[GLOBAL] Executing: $HOOK_TOOL_NAME'",
+            "blocking": false
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+##### Example Local Project Configuration
+Add to `.groq/local-settings.json`:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "delete_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[LOCAL] Blocking file deletion in this project' && exit 1",
+            "blocking": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "create_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'File created in project' >> ./project-activity.log"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+##### Hook Merging Behavior
+- Array-based hooks (PreToolUse, PostToolUse, etc.) are concatenated - local hooks run after global
+- Local configuration can add new matchers or hook types
+- Use local hooks for project-specific validations, logging, or workflows
+
+##### Security Notes
+
+⚠️ **IMPORTANT**: Hooks execute shell commands with your user permissions. Only use hooks you trust. 
+
+- **Review project hooks** (`.groq/local-settings.json`) before running the CLI in new projects
+- **Use `GROQ_NO_LOCAL_HOOKS=true`** environment variable to disable local hooks when working with untrusted projects
+- **Test hooks carefully** - they can execute any command your user account can run
 
 #### Changing Start Command
 To change the start command from `groq`, change `"groq"` in `"bin"` of `package.json` to your global command of choice.
