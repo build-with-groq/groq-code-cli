@@ -153,7 +153,23 @@ When asked about your identity, you should identify yourself as a coding assista
     debugLog('Setting API key in agent...');
     debugLog('API key provided:', apiKey ? `${apiKey.substring(0, 8)}...` : 'empty');
     this.apiKey = apiKey;
-    this.client = new Groq({ apiKey });
+    
+    // Base URL precedence: 1) ENV (handled by SDK), 2) config fallback
+    const envBaseURL = process.env.GROQ_BASE_URL?.trim();
+    const configBaseURL = this.configManager.getBaseUrl();
+    if (envBaseURL) {
+      debugLog(`Using base URL from environment: ${envBaseURL}`);
+      // Let SDK pick up GROQ_BASE_URL automatically
+      this.client = new Groq({ apiKey });
+    } else if (configBaseURL) {
+      const normalized = configBaseURL.replace(/\/+$/, '');
+      debugLog(`Using base URL from config: ${normalized}`);
+      this.client = new Groq({ apiKey, baseURL: normalized });
+    } else {
+      // Default SDK behavior
+      this.client = new Groq({ apiKey });
+    }
+    
     debugLog('Groq client initialized with provided API key');
   }
 
@@ -276,7 +292,8 @@ When asked about your identity, you should identify yourself as a coding assista
           
           // Log equivalent curl command
           this.requestCount++;
-          const curlCommand = generateCurlCommand(this.apiKey!, requestBody, this.requestCount);
+          const baseUrl = resolveEffectiveBaseUrl(this.configManager);
+          const curlCommand = generateCurlCommand(this.apiKey!, requestBody, this.requestCount, baseUrl);
           if (curlCommand) {
             debugLog('Equivalent curl command:', curlCommand);
           }
@@ -596,17 +613,42 @@ function debugLog(message: string, data?: any) {
   fs.appendFileSync(DEBUG_LOG_FILE, logEntry);
 }
 
-function generateCurlCommand(apiKey: string, requestBody: any, requestCount: number): string {
+/**
+ * Helper to compute the effective base URL (ENV > config > default)
+ */
+function resolveEffectiveBaseUrl(configManager: ConfigManager): string {
+  const env = process.env.GROQ_BASE_URL;
+  if (env) {
+    // Don't append /openai/v1 if it's already in the URL
+    const normalized = env.replace(/\/+$/, '');
+    return normalized.includes('/openai/v1') ? normalized : normalized + '/openai/v1';
+  }
+  const cfg = configManager.getBaseUrl();
+  if (cfg) {
+    // Don't append /openai/v1 if it's already in the URL
+    const normalized = cfg.replace(/\/+$/, '');
+    return normalized.includes('/openai/v1') ? normalized : normalized + '/openai/v1';
+  }
+  return 'https://api.groq.com/openai/v1';
+}
+
+function generateCurlCommand(apiKey: string, requestBody: any, requestCount: number, baseUrl: string): string {
   if (!debugEnabled) return '';
   
-  const maskedApiKey = `${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 8)}`;
+  const maskApiKey = (key: string) => {
+    if (key.length <= 6) return '***';
+    if (key.length <= 12) return `${key.slice(0, 3)}***${key.slice(-2)}`;
+    return `${key.slice(0, 6)}...${key.slice(-4)}`;
+  };
+  const maskedApiKey = maskApiKey(apiKey);
   
   // Write request body to JSON file
   const jsonFileName = `debug-request-${requestCount}.json`;
   const jsonFilePath = path.join(process.cwd(), jsonFileName);
   fs.writeFileSync(jsonFilePath, JSON.stringify(requestBody, null, 2));
   
-  const curlCmd = `curl -X POST "https://api.groq.com/openai/v1/chat/completions" \\
+  const endpoint = `${baseUrl.replace(/\/+$/, '')}/chat/completions`;
+  const curlCmd = `curl -X POST "${endpoint}" \\
   -H "Authorization: Bearer ${maskedApiKey}" \\
   -H "Content-Type: application/json" \\
   -d @${jsonFileName}`;
