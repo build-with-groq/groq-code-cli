@@ -110,6 +110,7 @@ export default function Chat({ agent }: ChatProps) {
           setShowModelSelector,
           toggleReasoning,
           showReasoning,
+          sendMessage,
         });
         return;
       }

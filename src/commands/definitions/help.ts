@@ -24,7 +24,27 @@ Keyboard Shortcuts:
 - Shift+Tab - Toggle auto-approval for editing tools
 - Ctrl+C - Exit the application
 
-This is a highly customizable, lightweight, and open-source coding CLI powered by Groq. Ask for help with coding tasks, debugging issues, or explaining code.`
+This is a highly customizable, lightweight, and open-source coding CLI powered by Groq. Ask for help with coding tasks, debugging issues, or explaining code.
+
+Custom slash commands:
+- Add to global: ~/.groq/local-settings.json
+- Or project: ./.groq/local-settings.json
+
+Notes:
+- Built-in commands cannot be overridden. If a custom command name matches a built-in, it will be ignored.
+
+{
+  "customCommands": [
+    {
+      "command": "review",
+      "description": "Review code or a path",
+      "customPrompt": "You are a strict code reviewer. Review the following:",
+      "appendArgs": true,
+      "role": "user"
+    }
+  ]
+}
+`
     });
   }
 };
