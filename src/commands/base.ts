@@ -5,6 +5,8 @@ export interface CommandContext {
   setShowModelSelector?: (show: boolean) => void;
   toggleReasoning?: () => void;
   showReasoning?: boolean;
+  /** Raw argument string following the slash command (unparsed). */
+  args?: string;
 }
 
 export interface CommandDefinition {

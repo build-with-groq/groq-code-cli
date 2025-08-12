@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { writeFile, createDirectory, displayTree } from '../utils/file-ops.js';
 import { setReadFilesTracker } from './validators.js';
+import { hooksManager } from '../utils/hooks.js';
 
 const execAsync = promisify(exec);
 
@@ -784,23 +785,35 @@ export async function executeTool(toolName: string, toolArgs: Record<string, any
     return createToolResponse(false, undefined, '', 'Error: Unknown tool');
   }
 
+  // Execute pre-tool hooks
+  const hookResult = await hooksManager.executePreToolHooks(toolName, toolArgs);
+  if (!hookResult.allowed) {
+    return createToolResponse(false, undefined, '', `Tool blocked by hook: ${hookResult.blockedReason}`);
+  }
+
   try {
     const toolFunction = (TOOL_REGISTRY as any)[toolName];
     
     // Call the function with the appropriate arguments based on the tool
+    let result: ToolResult;
     switch (toolName) {
       case 'read_file':
-        return await toolFunction(toolArgs.file_path, toolArgs.start_line, toolArgs.end_line);
+        result = await toolFunction(toolArgs.file_path, toolArgs.start_line, toolArgs.end_line);
+        break;
       case 'create_file':
-        return await toolFunction(toolArgs.file_path, toolArgs.content, toolArgs.file_type, toolArgs.overwrite);
+        result = await toolFunction(toolArgs.file_path, toolArgs.content, toolArgs.file_type, toolArgs.overwrite);
+        break;
       case 'edit_file':
-        return await toolFunction(toolArgs.file_path, toolArgs.old_text, toolArgs.new_text, toolArgs.replace_all);
+        result = await toolFunction(toolArgs.file_path, toolArgs.old_text, toolArgs.new_text, toolArgs.replace_all);
+        break;
       case 'delete_file':
-        return await toolFunction(toolArgs.file_path, toolArgs.recursive);
+        result = await toolFunction(toolArgs.file_path, toolArgs.recursive);
+        break;
       case 'list_files':
-        return await toolFunction(toolArgs.directory, toolArgs.pattern, toolArgs.recursive, toolArgs.show_hidden);
+        result = await toolFunction(toolArgs.directory, toolArgs.pattern, toolArgs.recursive, toolArgs.show_hidden);
+        break;
       case 'search_files':
-        return await toolFunction(
+        result = await toolFunction(
           toolArgs.pattern,
           toolArgs.file_pattern,
           toolArgs.directory,
@@ -813,15 +826,24 @@ export async function executeTool(toolName: string, toolArgs: Record<string, any
           toolArgs.context_lines,
           toolArgs.group_by_file
         );
+        break;
       case 'execute_command':
-        return await toolFunction(toolArgs.command, toolArgs.command_type, toolArgs.working_directory, toolArgs.timeout);
+        result = await toolFunction(toolArgs.command, toolArgs.command_type, toolArgs.working_directory, toolArgs.timeout);
+        break;
       case 'create_tasks':
-        return await toolFunction(toolArgs.user_query, toolArgs.tasks);
+        result = await toolFunction(toolArgs.user_query, toolArgs.tasks);
+        break;
       case 'update_tasks':
-        return await toolFunction(toolArgs.task_updates);
+        result = await toolFunction(toolArgs.task_updates);
+        break;
       default:
-        return createToolResponse(false, undefined, '', 'Error: Tool not implemented');
+        result = createToolResponse(false, undefined, '', 'Error: Tool not implemented');
     }
+
+    // Execute post-tool hooks
+    await hooksManager.executePostToolHooks(toolName, toolArgs, result);
+
+    return result;
   } catch (error) {
     if (error instanceof TypeError) {
       return createToolResponse(false, undefined, '', 'Error: Invalid tool arguments');

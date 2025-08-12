@@ -11,7 +11,8 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsc --watch"
+		"dev": "tsc --watch",
+		"test": "ava"
 	},
 	"files": [
 		"dist"
@@ -29,7 +30,6 @@
 		"@types/react": "^19.1.8",
 		"@vdemedes/prettier-config": "^2.0.1",
 		"ava": "^5.2.0",
-		"chalk": "^5.2.0",
 		"eslint-config-xo-react": "^0.27.0",
 		"eslint-plugin-react": "^7.32.2",
 		"eslint-plugin-react-hooks": "^4.6.0",
