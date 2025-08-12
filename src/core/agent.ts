@@ -55,6 +55,27 @@ export class Agent {
 
     // Add system message to conversation
     this.messages.push({ role: 'system', content: this.systemMessage });
+
+    // Load project context if available
+    try {
+      const explicitContextFile = process.env.GROQ_CONTEXT_FILE;
+      const baseDir = process.env.GROQ_CONTEXT_DIR || process.cwd();
+      const contextPath = explicitContextFile || path.join(baseDir, '.groq', 'context.md');
+      const contextLimit = parseInt(process.env.GROQ_CONTEXT_LIMIT || '20000', 10);
+      if (fs.existsSync(contextPath)) {
+        const ctx = fs.readFileSync(contextPath, 'utf-8');
+        const trimmed = ctx.length > contextLimit ? ctx.slice(0, contextLimit) + '\n... [truncated]' : ctx;
+        const contextSource = explicitContextFile ? contextPath : '.groq/context.md';
+        this.messages.push({
+          role: 'system',
+          content: `Project context loaded from ${contextSource}. Use this as high-level reference when reasoning about the repository.\n\n${trimmed}`
+        });
+      }
+    } catch (error) {
+      if (debugEnabled) {
+        debugLog('Failed to load project context:', error);
+      }
+    }
   }
 
   static async create(
