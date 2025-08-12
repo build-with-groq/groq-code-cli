@@ -3,6 +3,7 @@ import { helpCommand } from './definitions/help.js';
 import { loginCommand } from './definitions/login.js';
 import { modelCommand } from './definitions/model.js';
 import { clearCommand } from './definitions/clear.js';
+import { initCommand } from './definitions/init.js';
 import { reasoningCommand } from './definitions/reasoning.js';
 
 const availableCommands: CommandDefinition[] = [
@@ -10,6 +11,7 @@ const availableCommands: CommandDefinition[] = [
   loginCommand,
   modelCommand,
   clearCommand,
+  initCommand,
   reasoningCommand,
 ];
 

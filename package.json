@@ -10,8 +10,9 @@
 		"node": ">=16"
 	},
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc --watch"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "ava"
 	},
 	"files": [
 		"dist"
