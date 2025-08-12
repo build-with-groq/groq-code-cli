@@ -2,19 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-interface CustomCommandConfig {
-  command: string;
-  description?: string;
-  customPrompt?: string; // preferred key
-  prompt?: string;       // alias for customPrompt
-  appendArgs?: boolean;
-  role?: 'user' | 'system';
-}
-
 interface Config {
   groqApiKey?: string;
   defaultModel?: string;
-  customCommands?: CustomCommandConfig[];
 }
 
 const CONFIG_DIR = '.groq'; // In home directory
@@ -22,13 +12,10 @@ const CONFIG_FILE = 'local-settings.json';
 
 export class ConfigManager {
   private configPath: string;
-  private projectConfigPath: string;
 
   constructor() {
     const homeDir = os.homedir();
     this.configPath = path.join(homeDir, CONFIG_DIR, CONFIG_FILE);
-    // Project-level settings: ./.groq/local-settings.json
-    this.projectConfigPath = path.join(process.cwd(), CONFIG_DIR, CONFIG_FILE);
   }
 
   private ensureConfigDir(): void {
@@ -127,38 +114,6 @@ export class ConfigManager {
       });
     } catch (error) {
       throw new Error(`Failed to save default model: ${error}`);
-    }
-  }
-
-  // --- Custom commands ---
-  public getCustomCommands(): CustomCommandConfig[] {
-    try {
-      const project = this.readConfigIfExists(this.projectConfigPath);
-      const global = this.readConfigIfExists(this.configPath);
-      const projectCommands = Array.isArray(project.customCommands) ? project.customCommands : [];
-      const globalCommands = Array.isArray(global.customCommands) ? global.customCommands : [];
-
-      // Merge with project commands taking precedence by command name
-      const map = new Map<string, CustomCommandConfig>();
-      for (const c of globalCommands) {
-        if (c && typeof c.command === 'string') map.set(c.command, c);
-      }
-      for (const c of projectCommands) {
-        if (c && typeof c.command === 'string') map.set(c.command, c);
-      }
-      return Array.from(map.values());
-    } catch (error) {
-      return [];
-    }
-  }
-
-  private readConfigIfExists(filePath: string): Config {
-    try {
-      if (!fs.existsSync(filePath)) return {};
-      const data = fs.readFileSync(filePath, 'utf8');
-      return JSON.parse(data) as Config;
-    } catch {
-      return {};
     }
   }
 }
