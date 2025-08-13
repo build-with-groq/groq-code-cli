@@ -83,6 +83,7 @@ Options:
   -t, --temperature <temp>      Temperature for generation (default: 1)
   -s, --system <message>        Custom system message
   -d, --debug                   Enable debug logging to debug-agent.log in current directory
+  -b, --base-url <url>          Custom API base URL
   -h, --help                    Display help
   -V, --version                 Display version number
 ```
@@ -105,6 +106,20 @@ This creates a .groq/ folder in your home directory that stores your API key, de
 You can also set your API key for your current directory via environment variable:
 ```bash
 export GROQ_API_KEY=your_api_key_here
+```
+
+### Custom Base URL
+
+Configure custom API endpoint:
+```bash
+# CLI argument (sets environment variable)
+groq --base-url https://custom-api.example.com
+
+# Environment variable (handled natively by Groq SDK)
+export GROQ_BASE_URL=https://custom-api.example.com
+
+# Config file (fallback, stored in ~/.groq/local-settings.json)
+# Add "groqBaseUrl": "https://custom-api.example.com" to config
 ```
 
 ### Available Commands

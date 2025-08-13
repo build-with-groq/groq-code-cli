@@ -11,7 +11,8 @@ const program = new Command();
 async function startChat(
   temperature: number,
   system: string | null,
-  debug?: boolean
+  debug?: boolean,
+  baseUrl?: string
 ): Promise<void> {
   console.log(chalk.hex('#FF4500')(`                             
   ██████    ██████   ██████   ██████
@@ -35,6 +36,18 @@ async function startChat(
     
   let defaultModel = 'moonshotai/kimi-k2-instruct';
   try {
+    // Set base URL if provided via CLI
+    if (baseUrl) {
+      // Validate URL format
+      try {
+        new URL(baseUrl);
+      } catch (error) {
+        console.log(chalk.red(`Invalid base URL format: ${baseUrl}`));
+        process.exit(1);
+      }
+      process.env.GROQ_BASE_URL = baseUrl;
+    }
+    
     // Create agent (API key will be checked on first message)
     const agent = await Agent.create(defaultModel, temperature, system, debug);
 
@@ -52,11 +65,13 @@ program
   .option('-t, --temperature <temperature>', 'Temperature for generation', parseFloat, 1.0)
   .option('-s, --system <message>', 'Custom system message')
   .option('-d, --debug', 'Enable debug logging to debug-agent.log in current directory')
+  .option('-b, --base-url <url>', 'Custom API base URL')
   .action(async (options) => {
     await startChat(
       options.temperature,
       options.system || null,
-      options.debug
+      options.debug,
+      options.baseUrl
     );
   });
 
