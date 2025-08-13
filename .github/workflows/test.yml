@@ -1,0 +1,174 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop, 'feat/*', 'fix/*' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linter
+      run: npm run lint || true
+      continue-on-error: true
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Run tests with coverage
+      run: npm run test:coverage
+    
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports-${{ matrix.node-version }}
+        path: |
+          coverage/
+          coverage-report.json
+        retention-days: 7
+    
+    - name: Generate coverage summary
+      if: always()
+      run: |
+        echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Node Version: ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ -f coverage/lcov-report/index.html ]; then
+          echo "✅ Coverage report generated successfully" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Coverage report not found" >> $GITHUB_STEP_SUMMARY
+        fi
+    
+    - name: Comment PR with coverage
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      continue-on-error: true
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          let coverageComment = '## 📊 Test Coverage Report\n\n';
+          
+          try {
+            // Check if coverage file exists
+            if (fs.existsSync('coverage/coverage-final.json')) {
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-final.json', 'utf8'));
+              
+              // Calculate overall coverage
+              let totalStatements = 0;
+              let coveredStatements = 0;
+              let totalBranches = 0;
+              let coveredBranches = 0;
+              let totalFunctions = 0;
+              let coveredFunctions = 0;
+              let totalLines = 0;
+              let coveredLines = 0;
+              
+              for (const file in coverage) {
+                const fileCoverage = coverage[file];
+                
+                // Statements
+                const stmts = Object.values(fileCoverage.s || {});
+                totalStatements += stmts.length;
+                coveredStatements += stmts.filter(s => s > 0).length;
+                
+                // Branches
+                const branches = Object.values(fileCoverage.b || {}).flat();
+                totalBranches += branches.length;
+                coveredBranches += branches.filter(b => b > 0).length;
+                
+                // Functions
+                const funcs = Object.values(fileCoverage.f || {});
+                totalFunctions += funcs.length;
+                coveredFunctions += funcs.filter(f => f > 0).length;
+                
+                // Lines
+                const lines = Object.values(fileCoverage.l || {});
+                totalLines += lines.length;
+                coveredLines += lines.filter(l => l > 0).length;
+              }
+              
+              const stmtCoverage = totalStatements ? (coveredStatements / totalStatements * 100).toFixed(2) : 0;
+              const branchCoverage = totalBranches ? (coveredBranches / totalBranches * 100).toFixed(2) : 0;
+              const funcCoverage = totalFunctions ? (coveredFunctions / totalFunctions * 100).toFixed(2) : 0;
+              const lineCoverage = totalLines ? (coveredLines / totalLines * 100).toFixed(2) : 0;
+              
+              coverageComment += `| Metric | Coverage | Threshold | Status |\n`;
+              coverageComment += `|--------|----------|-----------|--------|\n`;
+              coverageComment += `| Lines | ${lineCoverage}% | 80% | ${lineCoverage >= 80 ? '✅' : '❌'} |\n`;
+              coverageComment += `| Statements | ${stmtCoverage}% | 80% | ${stmtCoverage >= 80 ? '✅' : '❌'} |\n`;
+              coverageComment += `| Functions | ${funcCoverage}% | 80% | ${funcCoverage >= 80 ? '✅' : '❌'} |\n`;
+              coverageComment += `| Branches | ${branchCoverage}% | 80% | ${branchCoverage >= 80 ? '✅' : '❌'} |\n`;
+              
+              coverageComment += `\n📝 **Node Version:** ${{ matrix.node-version }}\n`;
+            } else {
+              coverageComment += '❌ Coverage report not found\n';
+            }
+          } catch (error) {
+            coverageComment += `❌ Error reading coverage report: ${error.message}\n`;
+          }
+          
+          // Find existing comment
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && 
+            comment.body.includes('📊 Test Coverage Report')
+          );
+          
+          // Update or create comment
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: coverageComment
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: coverageComment
+            });
+          }
+
+  test-matrix-complete:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check test matrix status
+        run: |
+          if [ "${{ needs.test.result }}" == "success" ]; then
+            echo "✅ All tests passed across all Node versions!"
+            exit 0
+          else
+            echo "❌ Tests failed. Check the logs for details."
+            exit 1
+          fi

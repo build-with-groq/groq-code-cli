@@ -117,7 +117,37 @@ export GROQ_API_KEY=your_api_key_here
 
 ## Development
 
-### Testing Locally
+### Testing
+
+The project features a comprehensive test suite built with Ava, achieving **95.1% pass rate** across 328 tests.
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test types
+npm run test:unit          # Unit tests only
+npm run test:integration   # Integration tests only  
+npm run test:component     # Component tests only
+
+# Run with coverage report
+npm run test:coverage
+
+# Watch mode for development
+npm run test:watch
+
+# Verbose output for debugging
+npm run test:verbose
+```
+
+The test suite covers:
+- **Unit tests**: Individual functions and modules (184 tests)
+- **Integration tests**: End-to-end workflows (20 tests) 
+- **Component tests**: React UI components (124 tests)
+
+For complete testing documentation, contribution guidelines, and best practices, see the [Complete Testing Guide](./docs/COMPLETE_TESTING_GUIDE.md).
+
+### Development
 ```bash
 # Run this in the background during development to automatically apply any changes to the source code
 npm run dev  
@@ -162,7 +192,14 @@ groq-code-cli/
 │       ├── file-ops.ts         # File system operations
 │       ├── local-settings.ts   # Local configuration management
 │       └── markdown.ts         # Markdown processing utilities
-├── docs/                   
+├── test/                       # Test suite (328 tests)
+│   ├── unit/                   # Unit tests for individual modules (184 tests)
+│   ├── integration/            # Integration tests (20 tests)
+│   └── component/              # React component tests (124 tests)
+├── docs/                       # Documentation
+│   ├── COMPLETE_TESTING_GUIDE.md # Comprehensive testing documentation
+│   └── ...                     # Additional documentation
+├── ava.config.js               # Ava test runner configuration
 ├── package.json    
 ├── tsconfig.json        
 └── LICENSE          

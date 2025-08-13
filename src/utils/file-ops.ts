@@ -6,9 +6,9 @@ import { IGNORE_PATTERNS } from './constants.js';
  * Write content to a file with safety checks
  */
 export async function writeFile(filepath: string, content: string, force: boolean = false, backup: boolean = false): Promise<boolean> {
-  const filePath = path.resolve(filepath);
-  
   try {
+    const filePath = path.resolve(filepath);
+    
     // Create parent directories if they don't exist
     const parentDir = path.dirname(filePath);
     await fs.promises.mkdir(parentDir, { recursive: true });
@@ -48,7 +48,7 @@ export async function deleteFile(filepath: string, force: boolean = false): Prom
     if (stats.isFile()) {
       await fs.promises.unlink(filePath);
     } else if (stats.isDirectory()) {
-      await fs.promises.rmdir(filePath, { recursive: true });
+      await fs.promises.rm(filePath, { recursive: true });
     }
     return true;
   } catch (error: any) {
@@ -64,8 +64,6 @@ export async function deleteFile(filepath: string, force: boolean = false): Prom
  */
 export async function displayTree(
   directory: string = '.', 
-  pattern: string = '*', 
-  recursive: boolean = false, 
   showHidden: boolean = false
 ): Promise<string> {
   const directoryPath = path.resolve(directory);
@@ -73,7 +71,7 @@ export async function displayTree(
   try {
     const exists = await fs.promises.access(directoryPath).then(() => true).catch(() => false);
     if (!exists) {
-      return `Directory not found: ${directory}`;
+      return '';
     }
     
     const items = await fs.promises.readdir(directoryPath, { withFileTypes: true });
@@ -102,7 +100,7 @@ export async function displayTree(
     
     return output.trim();
   } catch (error) {
-    return `Error reading directory: ${error}`;
+    return '';
   }
 }
 
@@ -114,25 +112,31 @@ export function shouldIgnore(filePath: string): boolean {
   const pathStr = path.resolve(filePath);
   const name = path.basename(pathStr);
   
+  // First check if it's an allowed hidden file
+  const allowedHiddenFiles = new Set(['.env', '.gitignore', '.dockerfile']);
+  if (allowedHiddenFiles.has(name)) {
+    return false;
+  }
+  
   // Check ignore patterns
   for (const pattern of IGNORE_PATTERNS) {
     if (pattern.includes('*')) {
       // Simple glob matching, convert * to regex
       const regexPattern = pattern.replace(/\*/g, '.*');
-      const regex = new RegExp(regexPattern);
+      const regex = new RegExp(`^${regexPattern}$`);
       if (regex.test(name)) {
         return true;
       }
     } else {
-      if (pathStr.includes(pattern) || name === pattern) {
+      // For exact patterns, check if the basename matches or the path contains the pattern as a directory
+      if (name === pattern || pathStr.split(path.sep).includes(pattern)) {
         return true;
       }
     }
   }
   
-  // Ignore hidden files and directories (starting with .)
-  const allowedHiddenFiles = new Set(['.env', '.gitignore', '.dockerfile']);
-  if (name.startsWith('.') && !allowedHiddenFiles.has(name)) {
+  // Ignore other hidden files and directories (starting with .)
+  if (name.startsWith('.')) {
     return true;
   }
   

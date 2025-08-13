@@ -2,3 +2,11 @@ node_modules
 dist
 .env
 .DS_Store
+test-coverage.txt
+test-output.txt
+test-results.xmlcoverage/
+coverage-report.json
+full-test-output.txt
+coverage
+debug-agent.log
+.serena/

@@ -181,6 +181,11 @@ export async function readFile(filePath: string, startLine?: number, endLine?: n
  * Create a new file or directory with specified content
  */
 export async function createFile(filePath: string, content: string, fileType: string = 'file', overwrite: boolean = false): Promise<ToolResult> {
+  // Validate file type first (before try-catch)
+  if (fileType !== 'file' && fileType !== 'directory') {
+    return createToolResponse(false, undefined, '', "Error: Invalid file_type, must be 'file' or 'directory'");
+  }
+  
   try {
     const targetPath = path.resolve(filePath);
 
@@ -197,15 +202,13 @@ export async function createFile(filePath: string, content: string, fileType: st
       } else {
         return createToolResponse(false, undefined, '', 'Error: Failed to create directory');
       }
-    } else if (fileType === 'file') {
+    } else {
       const result = await writeFile(targetPath, content, overwrite, true);
       if (result) {
         return createToolResponse(true, undefined, `File created: ${filePath}`);
       } else {
         return createToolResponse(false, undefined, '', 'Error: Failed to create file');
       }
-    } else {
-      return createToolResponse(false, undefined, '', "Error: Invalid file_type, must be 'file' or 'directory'");
     }
 
   } catch (error) {
@@ -312,7 +315,7 @@ export async function listFiles(directory: string = '.', pattern: string = '*', 
     }
 
     // Get tree display output
-    const treeOutput = await displayTree(directory, pattern, recursive, showHidden);
+    const treeOutput = await displayTree(directory, showHidden);
 
     return createToolResponse(true, treeOutput, `Listed ${directory}`);
 

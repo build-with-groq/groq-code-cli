@@ -1,12 +1,20 @@
 import { CommandDefinition, CommandContext } from '../base.js';
-import { getAvailableCommands } from '../index.js';
+
+// To avoid circular dependency, we'll define the command list inline
+// This list should be kept in sync with the commands in index.ts
+const availableCommands = [
+  { command: 'help', description: 'Show help and available commands' },
+  { command: 'login', description: 'Login with Groq API key' },
+  { command: 'model', description: 'Select AI model' },
+  { command: 'clear', description: 'Clear chat history' },
+  { command: 'reasoning', description: 'Toggle reasoning mode' },
+];
 
 export const helpCommand: CommandDefinition = {
   command: 'help',
   description: 'Show help and available commands',
   handler: ({ addMessage }: CommandContext) => {
-    const commands = getAvailableCommands();
-    const commandList = commands.map(cmd => `/${cmd.command} - ${cmd.description}`).join('\n');
+    const commandList = availableCommands.map(cmd => `/${cmd.command} - ${cmd.description}`).join('\n');
     
     addMessage({
       role: 'system',
