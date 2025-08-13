@@ -44,7 +44,9 @@ export function parseMarkdown(content: string): MarkdownElement[] {
     }
     
     // Handle mixed content lines (with inline code, bold, italic)
-    if (line.includes('`') || line.includes('**') || (line.includes('*') && !line.includes('**'))) {
+    // Check for mixed content, but exclude list items
+    const isListItem = /^[\s]*[-*+]\s/.test(line);
+    if (!isListItem && (line.includes('`') || line.includes('**') || (line.includes('*') && !line.includes('**')))) {
       elements.push({
         type: 'mixed-line',
         content: line

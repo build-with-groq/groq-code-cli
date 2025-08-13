@@ -311,13 +311,7 @@ export function useAgent(
     agent.interrupt();
     setIsProcessing(false);
     setCurrentToolExecution(null);
-    
-    // Add the interruption message to the UI
-    addMessage({
-      role: 'system',
-      content: 'User has interrupted the request.',
-    });
-  }, [agent, addMessage]);
+  }, [agent]);
 
   const toggleReasoning = useCallback(() => {
     setShowReasoning(prev => !prev);

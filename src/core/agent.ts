@@ -32,6 +32,7 @@ export class Agent {
   private requestCount: number = 0;
   private currentAbortController: AbortController | null = null;
   private isInterrupted: boolean = false;
+  private debugEnabled: boolean = false;
 
   private constructor(
     model: string,
@@ -44,7 +45,7 @@ export class Agent {
     this.configManager = new ConfigManager();
     
     // Set debug mode
-    debugEnabled = debug || false;
+    this.debugEnabled = debug || false;
 
     // Build system message
     if (systemMessage) {
@@ -58,20 +59,25 @@ export class Agent {
   }
 
   static async create(
-    model: string,
-    temperature: number,
-    systemMessage: string | null,
+    model?: string,
+    temperature?: number,
+    systemMessage?: string | null,
     debug?: boolean
   ): Promise<Agent> {
-    // Check for default model in config if model not explicitly provided
+    // Check for config values, with priority: CLI args > project config > global config > defaults
     const configManager = new ConfigManager();
-    const defaultModel = configManager.getDefaultModel();
-    const selectedModel = defaultModel || model;
+    const configModel = configManager.getDefaultModel();
+    const configTemperature = configManager.getTemperature();
+    const configSystemMessage = configManager.getSystemMessage();
+    
+    const selectedModel = model || configModel || 'moonshotai/kimi-k2-instruct';
+    const selectedTemperature = temperature ?? configTemperature ?? 1;
+    const selectedSystemMessage = systemMessage ?? configSystemMessage ?? null;
     
     const agent = new Agent(
       selectedModel,
-      temperature,
-      systemMessage,
+      selectedTemperature,
+      selectedSystemMessage,
       debug
     );
     return agent;
@@ -150,11 +156,11 @@ When asked about your identity, you should identify yourself as a coding assista
   }
 
   public setApiKey(apiKey: string): void {
-    debugLog('Setting API key in agent...');
-    debugLog('API key provided:', apiKey ? `${apiKey.substring(0, 8)}...` : 'empty');
+    this.debugLog('Setting API key in agent...');
+    this.debugLog('API key provided:', apiKey ? `${apiKey.substring(0, 8)}...` : 'empty');
     this.apiKey = apiKey;
     this.client = new Groq({ apiKey });
-    debugLog('Groq client initialized with provided API key');
+    this.debugLog('Groq client initialized with provided API key');
   }
 
   public saveApiKey(apiKey: string): void {
@@ -196,11 +202,11 @@ When asked about your identity, you should identify yourself as a coding assista
   }
 
   public interrupt(): void {
-    debugLog('Interrupting current request');
+    this.debugLog('Interrupting current request');
     this.isInterrupted = true;
     
     if (this.currentAbortController) {
-      debugLog('Aborting current API request');
+      this.debugLog('Aborting current API request');
       this.currentAbortController.abort();
     }
     
@@ -217,25 +223,25 @@ When asked about your identity, you should identify yourself as a coding assista
     
     // Check API key on first message send
     if (!this.client) {
-      debugLog('Initializing Groq client...');
+      this.debugLog('Initializing Groq client...');
       // Try environment variable first
       const envApiKey = process.env.GROQ_API_KEY;
       if (envApiKey) {
-        debugLog('Using API key from environment variable');
+        this.debugLog('Using API key from environment variable');
         this.setApiKey(envApiKey);
       } else {
         // Try config file
-        debugLog('Environment variable GROQ_API_KEY not found, checking config file');
+        this.debugLog('Environment variable GROQ_API_KEY not found, checking config file');
         const configApiKey = this.configManager.getApiKey();
         if (configApiKey) {
-          debugLog('Using API key from config file');
+          this.debugLog('Using API key from config file');
           this.setApiKey(configApiKey);
         } else {
-          debugLog('No API key found anywhere');
+          this.debugLog('No API key found anywhere');
           throw new Error('No API key available. Please use /login to set your Groq API key.');
         }
       }
-      debugLog('Groq client initialized successfully');
+      this.debugLog('Groq client initialized successfully');
     }
 
     // Add user message
@@ -248,7 +254,7 @@ When asked about your identity, you should identify yourself as a coding assista
       while (iteration < maxIterations) {
         // Check for interruption before each iteration
         if (this.isInterrupted) {
-          debugLog('Chat loop interrupted by user');
+          this.debugLog('Chat loop interrupted by user');
           this.currentAbortController = null;
           return;
         }
@@ -259,9 +265,9 @@ When asked about your identity, you should identify yourself as a coding assista
             throw new Error('Groq client not initialized');
           }
 
-          debugLog('Making API call to Groq with model:', this.model);
-          debugLog('Messages count:', this.messages.length);
-          debugLog('Last few messages:', this.messages.slice(-3));
+          this.debugLog('Making API call to Groq with model:', this.model);
+          this.debugLog('Messages count:', this.messages.length);
+          this.debugLog('Last few messages:', this.messages.slice(-3));
           
           // Prepare request body for curl logging
           const requestBody = {
@@ -276,9 +282,9 @@ When asked about your identity, you should identify yourself as a coding assista
           
           // Log equivalent curl command
           this.requestCount++;
-          const curlCommand = generateCurlCommand(this.apiKey!, requestBody, this.requestCount);
+          const curlCommand = this.generateCurlCommand(this.apiKey!, requestBody, this.requestCount);
           if (curlCommand) {
-            debugLog('Equivalent curl command:', curlCommand);
+            this.debugLog('Equivalent curl command:', curlCommand);
           }
           
           // Create AbortController for this request
@@ -296,10 +302,10 @@ When asked about your identity, you should identify yourself as a coding assista
             signal: this.currentAbortController.signal
           });
 
-          debugLog('Full API response received:', response);
-          debugLog('Response usage:', response.usage);
-          debugLog('Response finish_reason:', response.choices[0].finish_reason);
-          debugLog('Response choices length:', response.choices.length);
+          this.debugLog('Full API response received:', response);
+          this.debugLog('Response usage:', response.usage);
+          this.debugLog('Response finish_reason:', response.choices[0].finish_reason);
+          this.debugLog('Response choices length:', response.choices.length);
           
           const message = response.choices[0].message;
           
@@ -314,12 +320,12 @@ When asked about your identity, you should identify yourself as a coding assista
               total_tokens: response.usage.total_tokens
             });
           }
-          debugLog('Message content length:', message.content?.length || 0);
-          debugLog('Message has tool_calls:', !!message.tool_calls);
-          debugLog('Message tool_calls count:', message.tool_calls?.length || 0);
+          this.debugLog('Message content length:', message.content?.length || 0);
+          this.debugLog('Message has tool_calls:', !!message.tool_calls);
+          this.debugLog('Message tool_calls count:', message.tool_calls?.length || 0);
           
           if (response.choices[0].finish_reason !== 'stop' && response.choices[0].finish_reason !== 'tool_calls') {
-            debugLog('WARNING - Unexpected finish_reason:', response.choices[0].finish_reason);
+            this.debugLog('WARNING - Unexpected finish_reason:', response.choices[0].finish_reason);
           }
 
           // Handle tool calls if present
@@ -343,7 +349,7 @@ When asked about your identity, you should identify yourself as a coding assista
             for (const toolCall of message.tool_calls) {
               // Check for interruption before each tool execution
               if (this.isInterrupted) {
-                debugLog('Tool execution interrupted by user');
+                this.debugLog('Tool execution interrupted by user');
                 this.currentAbortController = null;
                 return;
               }
@@ -375,15 +381,15 @@ When asked about your identity, you should identify yourself as a coding assista
 
           // No tool calls, this is the final response
           const content = message.content || '';
-          debugLog('Final response - no tool calls detected');
-          debugLog('Final content length:', content.length);
-          debugLog('Final content preview:', content.substring(0, 200));
+          this.debugLog('Final response - no tool calls detected');
+          this.debugLog('Final content length:', content.length);
+          this.debugLog('Final content preview:', content.substring(0, 200));
           
           if (this.onFinalMessage) {
-            debugLog('Calling onFinalMessage callback');
+            this.debugLog('Calling onFinalMessage callback');
             this.onFinalMessage(content, reasoning);
           } else {
-            debugLog('No onFinalMessage callback set');
+            this.debugLog('No onFinalMessage callback set');
           }
 
           // Add final response to conversation history
@@ -392,7 +398,7 @@ When asked about your identity, you should identify yourself as a coding assista
             content: content
           });
 
-          debugLog('Final response added to conversation history, exiting chat loop');
+          this.debugLog('Final response added to conversation history, exiting chat loop');
           this.currentAbortController = null; // Clear abort controller
           return; // Successfully completed, exit both loops
 
@@ -405,13 +411,13 @@ When asked about your identity, you should identify yourself as a coding assista
             error.message.includes('The operation was aborted') ||
             error.name === 'AbortError'
           )) {
-            debugLog('API request aborted due to user interruption');
+            this.debugLog('API request aborted due to user interruption');
             // Don't add error message if it's an interruption - the interrupt message was already added
             return;
           }
           
-          debugLog('Error occurred during API call:', error);
-          debugLog('Error details:', {
+          this.debugLog('Error occurred during API call:', error);
+          this.debugLog('Error details:', {
             message: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : 'No stack available'
           });
@@ -574,42 +580,59 @@ When asked about your identity, you should identify yourself as a coding assista
       return { error: errorMsg, success: false };
     }
   }
-}
-
-
-// Debug logging to file
-const DEBUG_LOG_FILE = path.join(process.cwd(), 'debug-agent.log');
-let debugLogCleared = false;
-let debugEnabled = false;
-
-function debugLog(message: string, data?: any) {
-  if (!debugEnabled) return;
   
-  // Clear log file on first debug log of each session
-  if (!debugLogCleared) {
-    fs.writeFileSync(DEBUG_LOG_FILE, '');
-    debugLogCleared = true;
+  private debugLogCleared: boolean = false;
+  
+  private debugLog(message: string, data?: any) {
+    if (!this.debugEnabled) return;
+    
+    const DEBUG_DIR = path.join(process.cwd(), '.groq-debug');
+    const DEBUG_LOG_FILE = path.join(DEBUG_DIR, 'agent.log');
+    
+    // Ensure debug directory exists
+    if (!fs.existsSync(DEBUG_DIR)) {
+      fs.mkdirSync(DEBUG_DIR, { recursive: true });
+    }
+    
+    // Clear log file on first debug log of each session
+    if (!this.debugLogCleared) {
+      fs.writeFileSync(DEBUG_LOG_FILE, '');
+      // Clean up old request JSON files
+      if (fs.existsSync(DEBUG_DIR)) {
+        const files = fs.readdirSync(DEBUG_DIR);
+        files
+          .filter(f => f.startsWith('debug-request-'))
+          .forEach(f => fs.unlinkSync(path.join(DEBUG_DIR, f)));
+      }
+      this.debugLogCleared = true;
+    }
+    
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${message}${data ? '\n' + JSON.stringify(data, null, 2) : ''}\n`;
+    fs.appendFileSync(DEBUG_LOG_FILE, logEntry);
   }
   
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${message}${data ? '\n' + JSON.stringify(data, null, 2) : ''}\n`;
-  fs.appendFileSync(DEBUG_LOG_FILE, logEntry);
-}
-
-function generateCurlCommand(apiKey: string, requestBody: any, requestCount: number): string {
-  if (!debugEnabled) return '';
-  
-  const maskedApiKey = `${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 8)}`;
-  
-  // Write request body to JSON file
-  const jsonFileName = `debug-request-${requestCount}.json`;
-  const jsonFilePath = path.join(process.cwd(), jsonFileName);
-  fs.writeFileSync(jsonFilePath, JSON.stringify(requestBody, null, 2));
-  
-  const curlCmd = `curl -X POST "https://api.groq.com/openai/v1/chat/completions" \\
+  private generateCurlCommand(apiKey: string, requestBody: any, requestCount: number): string {
+    if (!this.debugEnabled) return '';
+    
+    const DEBUG_DIR = path.join(process.cwd(), '.groq-debug');
+    const maskedApiKey = '<YOUR_API_KEY>';
+    
+    // Ensure debug directory exists
+    if (!fs.existsSync(DEBUG_DIR)) {
+      fs.mkdirSync(DEBUG_DIR, { recursive: true });
+    }
+    
+    // Write request body to JSON file
+    const jsonFileName = `debug-request-${requestCount}.json`;
+    const jsonFilePath = path.join(DEBUG_DIR, jsonFileName);
+    fs.writeFileSync(jsonFilePath, JSON.stringify(requestBody, null, 2));
+    
+    const curlCmd = `curl -X POST "https://api.groq.com/openai/v1/chat/completions" \\
   -H "Authorization: Bearer ${maskedApiKey}" \\
   -H "Content-Type: application/json" \\
   -d @${jsonFileName}`;
-  
-  return curlCmd;
+    
+    return curlCmd;
+  }
 }

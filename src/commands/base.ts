@@ -9,6 +9,7 @@ export interface CommandContext {
 
 export interface CommandDefinition {
   command: string;
+  aliases?: string[];
   description: string;
   handler: (context: CommandContext) => void;
 }
