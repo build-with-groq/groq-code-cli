@@ -242,6 +242,3 @@ Improvements through PRs are welcome!
 For issues and feature requests, please open an issue on GitHub.
 
 #### Share what you create with Groq on our [socials](https://x.com/GroqInc)!
-
-### Featured Community Creations
-- [OpenRouter Support](https://github.com/rahulvrane/groq-code-cli-openrouter) - rahulvrane

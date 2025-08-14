@@ -3,6 +3,7 @@ import { getAIClient } from './provider.js';
 import { validateReadBeforeEdit, getReadBeforeEditError } from '../tools/validators.js';
 import { ALL_TOOL_SCHEMAS, DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../tools/tool-schemas.js';
 import { ConfigManager } from '../utils/local-settings.js';
+import { parseApiError, shouldRetryError, getRetryDelay } from '../utils/errorUtils.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -87,7 +88,16 @@ Use tools to:
 - Create, edit, and manage files (create_file, edit_file, list_files, read_file, delete_file)
 - Execute commands (execute_command)
 - Search for information (search_files)
+- Plan and execute complex tasks (create_tasks, update_tasks, plan_tasks)
 - Help you understand the codebase before answering the user's question
+
+TASK PLANNING AND EXECUTION:
+When given a complex request, you should:
+1. Use the plan_tasks tool to automatically decompose the request into a structured task list
+2. Review the generated tasks and modify them if needed using create_tasks
+3. Execute tasks one by one using the appropriate tools
+4. Update task statuses using update_tasks as you progress
+5. Continue until all tasks are completed
 
 IMPLEMENTATION TASK RULES:
 - When asked to "build", "create", "implement", or "make" anything: USE TOOLS TO CREATE FILES
@@ -242,8 +252,10 @@ When asked about your identity, you should identify yourself as a coding assista
     // Add user message
     this.messages.push({ role: 'user', content: userInput });
 
-    const maxIterations = 50;
+    const isQwenModel = this.model.includes('qwen');
+    const maxIterations = isQwenModel ? 75 : 50; // Lower limit for qwen models
     let iteration = 0;
+    let consecutiveToolCalls = 0; // Track consecutive tool calls
 
     while (true) { // Outer loop for iteration reset
       while (iteration < maxIterations) {
@@ -372,10 +384,27 @@ When asked about your identity, you should identify yourself as a coding assista
 
             // Continue loop to get model response to tool results
             iteration++;
+            consecutiveToolCalls++;
+            
+            // Check if we're stuck in a tool loop (qwen model specific)
+            if (isQwenModel && consecutiveToolCalls > 8) {
+              debugLog('Qwen model stuck in tool loop, forcing final response');
+              
+              // Add a system message to force completion
+              this.messages.push({
+                role: 'system',
+                content: 'You have executed multiple tools successfully. Now provide a final summary response to the user without calling any more tools.'
+              });
+              
+              // Reset counter to allow one more iteration for final response
+              consecutiveToolCalls = 0;
+            }
+            
             continue;
           }
 
           // No tool calls, this is the final response
+          consecutiveToolCalls = 0; // Reset counter when we get a non-tool response
           const content = message.content || '';
           debugLog('Final response - no tool calls detected');
           debugLog('Final content length:', content.length);
@@ -418,43 +447,41 @@ When asked about your identity, you should identify yourself as a coding assista
             stack: error instanceof Error ? error.stack : 'No stack available'
           });
           
-          // Add API error as context message instead of terminating chat
-          let errorMessage = 'Unknown error occurred';
-          let is401Error = false;
+          // Parse the error to determine if we should retry
+          const parsedError = parseApiError(error);
           
-          if (error instanceof Error) {
-            // Check if it's an API error with more details
-            if ('status' in error && 'error' in error) {
-              const apiError = error as any;
-              is401Error = apiError.status === 401;
-              if (apiError.error?.error?.message) {
-                errorMessage = `API Error (${apiError.status}): ${apiError.error.error.message}`;
-                if (apiError.error.error.code) {
-                  errorMessage += ` (Code: ${apiError.error.error.code})`;
-                }
-              } else {
-                errorMessage = `API Error (${apiError.status}): ${error.message}`;
-              }
-            } else {
-              errorMessage = `Error: ${error.message}`;
-            }
-          } else {
-            errorMessage = `Error: ${String(error)}`;
+          // Don't retry certain errors
+          if (parsedError.type === 'auth' || parsedError.type === 'token_limit') {
+            // These errors should be shown to the user and stop processing
+            throw error;
           }
           
-          // For 401 errors (invalid API key), don't retry - terminate immediately
-          if (is401Error) {
-            throw new Error(`${errorMessage}. Please check your API key and use /login to set a valid key.`);
+          // For rate limit errors, stop adding to conversation history to prevent infinite loop
+          if (parsedError.type === 'rate_limit') {
+            debugLog('Rate limit error detected, stopping retry loop');
+            // Remove any previous error messages from the conversation to prevent accumulation
+            const lastMessage = this.messages[this.messages.length - 1];
+            if (lastMessage?.role === 'system' && lastMessage.content.includes('Previous API request failed')) {
+              this.messages.pop();
+            }
+            // Throw the error to be handled by the UI
+            throw error;
+          }
+          
+          // For other errors, try to recover but with limits
+          iteration++;
+          
+          // If we've had too many errors, stop trying
+          if (iteration >= maxIterations) {
+            throw error;
           }
           
           // Add error context to conversation for model to see and potentially recover
           this.messages.push({
             role: 'system',
-            content: `Previous API request failed with error: ${errorMessage}. Please try a different approach or ask the user for clarification.`
+            content: `Previous API request failed. Please try a different approach or ask the user for clarification.`
           });
           
-          // Continue conversation loop to let model attempt recovery
-          iteration++;
           continue;
         }
       }

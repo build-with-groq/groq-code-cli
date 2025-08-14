@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { writeFile, createDirectory, displayTree } from '../utils/file-ops.js';
 import { setReadFilesTracker } from './validators.js';
+import { planTasks, executeNextTask } from './task-planner-tool.js';
 
 const execAsync = promisify(exec);
 
@@ -774,6 +775,8 @@ export const TOOL_REGISTRY = {
   execute_command: executeCommand,
   create_tasks: createTasks,
   update_tasks: updateTasks,
+  plan_tasks: planTasks,
+  execute_next_task: executeNextTask,
 };
 
 /**
@@ -819,6 +822,10 @@ export async function executeTool(toolName: string, toolArgs: Record<string, any
         return await toolFunction(toolArgs.user_query, toolArgs.tasks);
       case 'update_tasks':
         return await toolFunction(toolArgs.task_updates);
+      case 'plan_tasks':
+        return await toolFunction(toolArgs.user_query);
+      case 'execute_next_task':
+        return await toolFunction();
       default:
         return createToolResponse(false, undefined, '', 'Error: Tool not implemented');
     }

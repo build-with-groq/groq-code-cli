@@ -4,6 +4,7 @@ import { loginCommand } from './definitions/login.js';
 import { modelCommand } from './definitions/model.js';
 import { clearCommand } from './definitions/clear.js';
 import { reasoningCommand } from './definitions/reasoning.js';
+import { taskCommand } from './definitions/task.js';
 
 const availableCommands: CommandDefinition[] = [
   helpCommand,
@@ -11,6 +12,7 @@ const availableCommands: CommandDefinition[] = [
   modelCommand,
   clearCommand,
   reasoningCommand,
+  taskCommand,
 ];
 
 export function getAvailableCommands(): CommandDefinition[] {

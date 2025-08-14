@@ -311,6 +311,15 @@ export const CREATE_TASKS_SCHEMA: ToolSchema = {
                 enum: ['pending', 'in_progress', 'completed'],
                 description: 'Task status: pending, in_progress, or completed',
                 default: 'pending'
+              },
+              notes: {
+                type: 'string',
+                description: 'Additional notes about the task'
+              },
+              dependencies: {
+                type: 'array',
+                items: { type: 'string' },
+                description: 'Task IDs that must be completed before this task'
               }
             },
             required: ['id', 'description']
@@ -318,6 +327,24 @@ export const CREATE_TASKS_SCHEMA: ToolSchema = {
         }
       },
       required: ['user_query', 'tasks']
+    }
+  }
+};
+
+export const PLAN_TASKS_SCHEMA: ToolSchema = {
+  type: 'function',
+  function: {
+    name: 'plan_tasks',
+    description: 'Automatically decompose user requests into structured task lists. Use when you want to break down a complex request without manually specifying tasks. Example: {"user_query": "Build a React todo app with authentication"}',
+    parameters: {
+      type: 'object',
+      properties: {
+        user_query: {
+          type: 'string',
+          description: 'Original user request to be automatically decomposed into tasks'
+        }
+      },
+      required: ['user_query']
     }
   }
 };
@@ -369,6 +396,7 @@ export const ALL_TOOL_SCHEMAS = [
   LIST_FILES_SCHEMA,
   CREATE_TASKS_SCHEMA,
   UPDATE_TASKS_SCHEMA,
+  PLAN_TASKS_SCHEMA,
   EXECUTE_COMMAND_SCHEMA
 ];
 
@@ -378,7 +406,8 @@ export const SAFE_TOOLS = [
   'list_files',
   'search_files',
   'create_tasks',
-  'update_tasks'
+  'update_tasks',
+  'plan_tasks'
 ];
 
 // Tools that require approval, unless auto-approval is enabled

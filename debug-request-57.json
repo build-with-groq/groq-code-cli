@@ -1,0 +1,622 @@
+{
+  "model": "qwen-3-coder-480b",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a coding assistant powered by qwen-3-coder-480b. Tools are available to you. Use tools to complete tasks.\n\nCRITICAL: For ANY implementation request (building apps, creating components, writing code), you MUST use tools to create actual files. NEVER provide text-only responses for coding tasks that require implementation.\n\nUse tools to:\n- Read and understand files (read_file, list_files, search_files)\n- Create, edit, and manage files (create_file, edit_file, list_files, read_file, delete_file)\n- Execute commands (execute_command)\n- Search for information (search_files)\n- Help you understand the codebase before answering the user's question\n\nIMPLEMENTATION TASK RULES:\n- When asked to \"build\", \"create\", \"implement\", or \"make\" anything: USE TOOLS TO CREATE FILES\n- Start immediately with create_file or list_files - NO text explanations first\n- Create actual working code, not example snippets\n- Build incrementally: create core files first, then add features\n- NEVER respond with \"here's how you could do it\" - DO IT with tools\n\nFILE OPERATION DECISION TREE:\n- ALWAYS check if file exists FIRST using list_files or read_file\n- Need to modify existing content? → read_file first, then edit_file (never create_file)\n- Need to create something new? → list_files to check existence first, then create_file\n- File exists but want to replace completely? → create_file with overwrite=true\n- Unsure if file exists? → list_files or read_file to check first\n- MANDATORY: read_file before any edit_file operation\n\nIMPORTANT TOOL USAGE RULES:\n  - Always use \"file_path\" parameter for file operations, never \"path\"\n  - Check tool schemas carefully before calling functions\n  - Required parameters are listed in the \"required\" array\n  - Text matching in edit_file must be EXACT (including whitespace)\n  - NEVER prefix tool names with \"repo_browser.\"\n\nCOMMAND EXECUTION SAFETY:\n  - Only use execute_command for commands that COMPLETE QUICKLY (tests, builds, short scripts)\n  - NEVER run commands that start long-running processes (servers, daemons, web apps)\n  - Examples of AVOIDED commands: \"flask app.py\", \"npm start\", \"python -m http.server\"\n  - Examples of SAFE commands: \"python test_script.py\", \"npm test\", \"ls -la\", \"git status\"\n  - If a long-running command is needed to complete the task, provide it to the user at the end of the response, not as a tool call, with a description of what it's for.\n\nIMPORTANT: When creating files, keep them focused and reasonably sized. For large applications:\n1. Start with a simple, minimal version first\n2. Create separate files for different components\n3. Build incrementally rather than generating massive files at once\n\nBe direct and efficient.\n\nDon't generate markdown tables.\n\nWhen asked about your identity, you should identify yourself as a coding assistant running on the qwen-3-coder-480b model."
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    },
+    {
+      "role": "system",
+      "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "read_file",
+        "description": "Read file contents with optional line range. REQUIRED before edit_file. Use to check if files exist and examine current code before making changes. Example: {\"file_path\": \"src/app.js\", \"start_line\": 10, \"end_line\": 20}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "Path to file. For files in current directory use just filename (e.g. \"app.js\"). For subdirectories use \"src/app.js\". DO NOT use absolute paths or leading slashes."
+            },
+            "start_line": {
+              "type": "integer",
+              "description": "Starting line number (1-indexed, optional)",
+              "minimum": 1
+            },
+            "end_line": {
+              "type": "integer",
+              "description": "Ending line number (1-indexed, optional)",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "file_path"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "create_file",
+        "description": "Create NEW files or directories that DO NOT EXIST. CRITICAL: Always check if file exists first using list_files or read_file before creating. If file exists, use edit_file instead. Set overwrite=true only if you explicitly need to replace existing content. Example: {\"file_path\": \"src/utils/new-helper.js\", \"content\": \"function helper() { return true; }\", \"file_type\": \"file\"}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "Path for new file/directory. For files in current directory use just filename (e.g. \"app.js\"). For subdirectories use \"src/app.js\". DO NOT use absolute paths or leading slashes."
+            },
+            "content": {
+              "type": "string",
+              "description": "File content (use empty string \"\" for directories)"
+            },
+            "file_type": {
+              "type": "string",
+              "enum": [
+                "file",
+                "directory"
+              ],
+              "description": "Create file or directory",
+              "default": "file"
+            },
+            "overwrite": {
+              "type": "boolean",
+              "description": "Overwrite existing file",
+              "default": false
+            }
+          },
+          "required": [
+            "file_path",
+            "content"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "edit_file",
+        "description": "Modify EXISTING files by exact text replacement. Use this for files that already exist. MANDATORY: Always read_file first to see current content before editing. Text must match exactly including whitespace. Example: {\"file_path\": \"src/app.js\", \"old_text\": \"const x = 1;\", \"new_text\": \"const x = 2;\"}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "Path to file to edit. For files in current directory use just filename (e.g. \"app.js\"). For subdirectories use \"src/app.js\". DO NOT use absolute paths or leading slashes."
+            },
+            "old_text": {
+              "type": "string",
+              "description": "Exact text to replace (must match perfectly including spaces/newlines)"
+            },
+            "new_text": {
+              "type": "string",
+              "description": "Replacement text"
+            },
+            "replace_all": {
+              "type": "boolean",
+              "description": "Replace all occurrences (default: false)",
+              "default": false
+            }
+          },
+          "required": [
+            "file_path",
+            "old_text",
+            "new_text"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "delete_file",
+        "description": "Remove files or directories. Use with caution. Example: {\"file_path\": \"temp/old_file.txt\"} or {\"file_path\": \"temp_dir\", \"recursive\": true}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_path": {
+              "type": "string",
+              "description": "Path to file/directory to delete. For files in current directory use just filename (e.g. \"app.js\"). For subdirectories use \"src/app.js\". DO NOT use absolute paths or leading slashes."
+            },
+            "recursive": {
+              "type": "boolean",
+              "description": "Delete directories and their contents",
+              "default": false
+            }
+          },
+          "required": [
+            "file_path"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_files",
+        "description": "Find text patterns in files across the codebase. Perfect for locating functions, classes, or specific code. Example: {\"pattern\": \"function handleClick\", \"file_pattern\": \"*.js\", \"context_lines\": 3}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "Text to search for (can be function names, classes, strings, etc.)"
+            },
+            "file_pattern": {
+              "type": "string",
+              "description": "File pattern filter (e.g., \"*.py\", \"*.js\", \"src/*.ts\")",
+              "default": "*"
+            },
+            "directory": {
+              "type": "string",
+              "description": "Directory to search in. Use \".\" or \"\" for current directory, \"src\" for subdirectory. DO NOT include leading slash.",
+              "default": "."
+            },
+            "case_sensitive": {
+              "type": "boolean",
+              "description": "Case-sensitive search",
+              "default": false
+            },
+            "pattern_type": {
+              "type": "string",
+              "enum": [
+                "substring",
+                "regex",
+                "exact",
+                "fuzzy"
+              ],
+              "description": "Match type: substring (partial), regex (patterns), exact (whole), fuzzy (similar)",
+              "default": "substring"
+            },
+            "file_types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "File extensions to include ([\"py\", \"js\", \"ts\"])"
+            },
+            "exclude_dirs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Directories to skip ([\"node_modules\", \".git\", \"dist\"])"
+            },
+            "exclude_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "File patterns to skip ([\"*.min.js\", \"*.log\"])"
+            },
+            "max_results": {
+              "type": "integer",
+              "description": "Maximum results to return (1-1000)",
+              "default": 100,
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "context_lines": {
+              "type": "integer",
+              "description": "Lines of context around matches (0-10)",
+              "default": 0,
+              "minimum": 0,
+              "maximum": 10
+            },
+            "group_by_file": {
+              "type": "boolean",
+              "description": "Group results by filename",
+              "default": false
+            }
+          },
+          "required": [
+            "pattern"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "list_files",
+        "description": "Browse directory contents and file structure. Use to explore project layout and CHECK IF FILES EXIST before deciding between create_file vs edit_file. Example: {\"directory\": \"src\", \"pattern\": \"*.js\", \"recursive\": true}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "directory": {
+              "type": "string",
+              "description": "Directory path to list. Use \".\" or \"\" for current directory, \"src\" for subdirectory. DO NOT include leading slash.",
+              "default": "."
+            },
+            "pattern": {
+              "type": "string",
+              "description": "File pattern filter (\"*.py\", \"test_*\", etc.)",
+              "default": "*"
+            },
+            "recursive": {
+              "type": "boolean",
+              "description": "List subdirectories recursively",
+              "default": false
+            },
+            "show_hidden": {
+              "type": "boolean",
+              "description": "Include hidden files (.gitignore, .env, etc.)",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "create_tasks",
+        "description": "Break down complex requests into organized task lists. Use for multi-step projects. Example: {\"user_query\": \"Build login system\", \"tasks\": [{\"id\": \"1\", \"description\": \"Create user model\", \"status\": \"pending\"}]}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_query": {
+              "type": "string",
+              "description": "Original user request being broken down"
+            },
+            "tasks": {
+              "type": "array",
+              "description": "List of actionable subtasks",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique task identifier string (e.g., \"1\", \"2\", \"3\")"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Clear, actionable task description"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed"
+                    ],
+                    "description": "Task status: pending, in_progress, or completed",
+                    "default": "pending"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description"
+                ]
+              }
+            }
+          },
+          "required": [
+            "user_query",
+            "tasks"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "update_tasks",
+        "description": "Update task progress and status. Use to mark tasks as started or completed. Example: {\"task_updates\": [{\"id\": \"1\", \"status\": \"completed\", \"notes\": \"Successfully implemented\"}]}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "task_updates": {
+              "type": "array",
+              "description": "Array of status updates for specific tasks",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "ID string of task to update (must match existing task ID)"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed"
+                    ],
+                    "description": "New status: pending, in_progress, or completed"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "description": "Optional progress notes or completion details"
+                  }
+                },
+                "required": [
+                  "id",
+                  "status"
+                ]
+              }
+            }
+          },
+          "required": [
+            "task_updates"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "execute_command",
+        "description": "Run shell commands, scripts, or code. SAFETY WARNING: Only use for commands that COMPLETE and EXIT (test scripts, build commands, short-running scripts). NEVER use for commands that run indefinitely (flask server, node app starting, python -m http.server, etc.). Always prefer short-running commands that exit. Example: {\"command\": \"npm test\", \"command_type\": \"bash\"}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "Shell command to execute. Only use commands that exit/stop automatically. Examples: \"python my_script.py\", \"npm test\", \"ls -la\". Avoid: long-running commands, \"npm start\" (starts servers), etc."
+            },
+            "command_type": {
+              "type": "string",
+              "enum": [
+                "bash",
+                "python",
+                "setup",
+                "run"
+              ],
+              "description": "Command type: bash (shell), python (script), setup (auto-run), run (needs approval)"
+            },
+            "working_directory": {
+              "type": "string",
+              "description": "Directory to run command in (optional)"
+            },
+            "timeout": {
+              "type": "integer",
+              "description": "Max execution time in seconds (1-300)",
+              "minimum": 1,
+              "maximum": 300
+            }
+          },
+          "required": [
+            "command",
+            "command_type"
+          ]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "temperature": 1,
+  "max_tokens": 8000,
+  "stream": false
+}

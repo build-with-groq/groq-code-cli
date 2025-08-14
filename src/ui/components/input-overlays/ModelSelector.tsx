@@ -17,9 +17,19 @@ const PROVIDERS = [
     { id: 'mixtral-8x7b-32768', name: 'Mixtral-8x7b-32768', description: 'Large, fast, and capable model' },
   ]},
   { id: 'cerebras', name: 'Cerebras', models: [
-    { id: 'llama3.1-8b', name: 'LLaMA3.1-8B', description: 'Small, fast, and cheap model' },
-    { id: 'llama3.1-70b', name: 'LLaMA3.1-70B', description: 'Large, fast, and capable model' },
-    { id: 'llama3.3-70b', name: 'LLaMA3.3-70B', description: 'Large, fast, and capable model' },
+    { id: 'qwen-3-coder-480b', name: 'Qwen3 Coder', description: 'Most capable model' },
+  ]},
+  { id: 'openrouter', name: 'OpenRouter', models: [
+    { id: 'ai21/jamba-1.5-large', name: 'Jamba-1.5 Large', description: 'Mixture of experts model with 32K context window' },
+    { id: 'ai21/jamba-1.5-mini', name: 'Jamba-1.5 Mini', description: 'Smaller, faster version of Jamba with 256K context window' },
+    { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', description: 'Most intelligent model, excels at coding, complex tasks' },
+    { id: 'anthropic/claude-3-haiku', name: 'Claude 3 Haiku', description: 'Fastest and most compact model for near-instant responses' },
+    { id: 'meta-llama/llama-3.1-8b-instruct', name: 'LLaMA 3.1 8B', description: 'Balanced model with good performance' },
+    { id: 'meta-llama/llama-3.1-70b-instruct', name: 'LLaMA 3.1 70B', description: 'Large, fast, and capable model' },
+    { id: 'meta-llama/llama-3.1-405b-instruct', name: 'LLaMA 3.1 405B', description: 'Meta\'s most capable model' },
+    { id: 'qwen/qwen-2.5-coder-32b-instruct', name: 'Qwen 2.5 Coder 32B', description: 'Alibaba\'s latest coding-focused model' },
+    { id: 'qwen/qwen-2.5-72b-instruct', name: 'Qwen 2.5 72B', description: 'Alibaba\'s latest large language model' },
+    { id: 'qwen/qwen3-coder:nitro', name: 'Qwen 3 Coder (Cerebras)', description: 'Alibaba\'s best coding model' },
   ]},
 ];
 

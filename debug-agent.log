@@ -1,0 +1,2104 @@
+[2025-08-14T19:52:31.250Z] Initializing cerebras client...
+[2025-08-14T19:52:31.253Z] Environment variable GROQ_API_KEY not found, checking config file
+[2025-08-14T19:52:31.255Z] Using API key from config file
+[2025-08-14T19:52:31.255Z] Setting API key in agent...
+[2025-08-14T19:52:31.256Z] API key provided:
+"csk-6h56..."
+[2025-08-14T19:52:31.257Z] cerebras client initialized with provided API key
+[2025-08-14T19:52:31.258Z] Client initialized successfully
+[2025-08-14T19:52:31.259Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:31.260Z] Messages count:
+2
+[2025-08-14T19:52:31.260Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "You are a coding assistant powered by qwen-3-coder-480b. Tools are available to you. Use tools to complete tasks.\n\nCRITICAL: For ANY implementation request (building apps, creating components, writing code), you MUST use tools to create actual files. NEVER provide text-only responses for coding tasks that require implementation.\n\nUse tools to:\n- Read and understand files (read_file, list_files, search_files)\n- Create, edit, and manage files (create_file, edit_file, list_files, read_file, delete_file)\n- Execute commands (execute_command)\n- Search for information (search_files)\n- Help you understand the codebase before answering the user's question\n\nIMPLEMENTATION TASK RULES:\n- When asked to \"build\", \"create\", \"implement\", or \"make\" anything: USE TOOLS TO CREATE FILES\n- Start immediately with create_file or list_files - NO text explanations first\n- Create actual working code, not example snippets\n- Build incrementally: create core files first, then add features\n- NEVER respond with \"here's how you could do it\" - DO IT with tools\n\nFILE OPERATION DECISION TREE:\n- ALWAYS check if file exists FIRST using list_files or read_file\n- Need to modify existing content? → read_file first, then edit_file (never create_file)\n- Need to create something new? → list_files to check existence first, then create_file\n- File exists but want to replace completely? → create_file with overwrite=true\n- Unsure if file exists? → list_files or read_file to check first\n- MANDATORY: read_file before any edit_file operation\n\nIMPORTANT TOOL USAGE RULES:\n  - Always use \"file_path\" parameter for file operations, never \"path\"\n  - Check tool schemas carefully before calling functions\n  - Required parameters are listed in the \"required\" array\n  - Text matching in edit_file must be EXACT (including whitespace)\n  - NEVER prefix tool names with \"repo_browser.\"\n\nCOMMAND EXECUTION SAFETY:\n  - Only use execute_command for commands that COMPLETE QUICKLY (tests, builds, short scripts)\n  - NEVER run commands that start long-running processes (servers, daemons, web apps)\n  - Examples of AVOIDED commands: \"flask app.py\", \"npm start\", \"python -m http.server\"\n  - Examples of SAFE commands: \"python test_script.py\", \"npm test\", \"ls -la\", \"git status\"\n  - If a long-running command is needed to complete the task, provide it to the user at the end of the response, not as a tool call, with a description of what it's for.\n\nIMPORTANT: When creating files, keep them focused and reasonably sized. For large applications:\n1. Start with a simple, minimal version first\n2. Create separate files for different components\n3. Build incrementally rather than generating massive files at once\n\nBe direct and efficient.\n\nDon't generate markdown tables.\n\nWhen asked about your identity, you should identify yourself as a coding assistant running on the qwen-3-coder-480b model."
+  },
+  {
+    "role": "user",
+    "content": "hi"
+  }
+]
+[2025-08-14T19:52:31.263Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-1.json"
+[2025-08-14T19:52:31.522Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:31.523Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:31.524Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:31.525Z] Messages count:
+3
+[2025-08-14T19:52:31.526Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "You are a coding assistant powered by qwen-3-coder-480b. Tools are available to you. Use tools to complete tasks.\n\nCRITICAL: For ANY implementation request (building apps, creating components, writing code), you MUST use tools to create actual files. NEVER provide text-only responses for coding tasks that require implementation.\n\nUse tools to:\n- Read and understand files (read_file, list_files, search_files)\n- Create, edit, and manage files (create_file, edit_file, list_files, read_file, delete_file)\n- Execute commands (execute_command)\n- Search for information (search_files)\n- Help you understand the codebase before answering the user's question\n\nIMPLEMENTATION TASK RULES:\n- When asked to \"build\", \"create\", \"implement\", or \"make\" anything: USE TOOLS TO CREATE FILES\n- Start immediately with create_file or list_files - NO text explanations first\n- Create actual working code, not example snippets\n- Build incrementally: create core files first, then add features\n- NEVER respond with \"here's how you could do it\" - DO IT with tools\n\nFILE OPERATION DECISION TREE:\n- ALWAYS check if file exists FIRST using list_files or read_file\n- Need to modify existing content? → read_file first, then edit_file (never create_file)\n- Need to create something new? → list_files to check existence first, then create_file\n- File exists but want to replace completely? → create_file with overwrite=true\n- Unsure if file exists? → list_files or read_file to check first\n- MANDATORY: read_file before any edit_file operation\n\nIMPORTANT TOOL USAGE RULES:\n  - Always use \"file_path\" parameter for file operations, never \"path\"\n  - Check tool schemas carefully before calling functions\n  - Required parameters are listed in the \"required\" array\n  - Text matching in edit_file must be EXACT (including whitespace)\n  - NEVER prefix tool names with \"repo_browser.\"\n\nCOMMAND EXECUTION SAFETY:\n  - Only use execute_command for commands that COMPLETE QUICKLY (tests, builds, short scripts)\n  - NEVER run commands that start long-running processes (servers, daemons, web apps)\n  - Examples of AVOIDED commands: \"flask app.py\", \"npm start\", \"python -m http.server\"\n  - Examples of SAFE commands: \"python test_script.py\", \"npm test\", \"ls -la\", \"git status\"\n  - If a long-running command is needed to complete the task, provide it to the user at the end of the response, not as a tool call, with a description of what it's for.\n\nIMPORTANT: When creating files, keep them focused and reasonably sized. For large applications:\n1. Start with a simple, minimal version first\n2. Create separate files for different components\n3. Build incrementally rather than generating massive files at once\n\nBe direct and efficient.\n\nDon't generate markdown tables.\n\nWhen asked about your identity, you should identify yourself as a coding assistant running on the qwen-3-coder-480b model."
+  },
+  {
+    "role": "user",
+    "content": "hi"
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:31.529Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-2.json"
+[2025-08-14T19:52:31.865Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:31.866Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:31.867Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:31.868Z] Messages count:
+4
+[2025-08-14T19:52:31.869Z] Last few messages:
+[
+  {
+    "role": "user",
+    "content": "hi"
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:31.871Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-3.json"
+[2025-08-14T19:52:32.017Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.018Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.020Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.021Z] Messages count:
+5
+[2025-08-14T19:52:32.022Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.024Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-4.json"
+[2025-08-14T19:52:32.163Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.164Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.165Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.166Z] Messages count:
+6
+[2025-08-14T19:52:32.167Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.169Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-5.json"
+[2025-08-14T19:52:32.317Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.318Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.320Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.320Z] Messages count:
+7
+[2025-08-14T19:52:32.321Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.324Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-6.json"
+[2025-08-14T19:52:32.451Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.453Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.454Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.456Z] Messages count:
+8
+[2025-08-14T19:52:32.457Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.461Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-7.json"
+[2025-08-14T19:52:32.602Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.603Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.604Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.604Z] Messages count:
+9
+[2025-08-14T19:52:32.605Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.607Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-8.json"
+[2025-08-14T19:52:32.738Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.739Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.740Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.741Z] Messages count:
+10
+[2025-08-14T19:52:32.744Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.748Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-9.json"
+[2025-08-14T19:52:32.896Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:32.897Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:32.898Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:32.899Z] Messages count:
+11
+[2025-08-14T19:52:32.900Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:32.902Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-10.json"
+[2025-08-14T19:52:33.030Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.031Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.032Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.032Z] Messages count:
+12
+[2025-08-14T19:52:33.033Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.036Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-11.json"
+[2025-08-14T19:52:33.186Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.187Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.188Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.189Z] Messages count:
+13
+[2025-08-14T19:52:33.189Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.194Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-12.json"
+[2025-08-14T19:52:33.342Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.344Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.345Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.346Z] Messages count:
+14
+[2025-08-14T19:52:33.347Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.349Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-13.json"
+[2025-08-14T19:52:33.535Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.536Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.537Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.537Z] Messages count:
+15
+[2025-08-14T19:52:33.538Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.540Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-14.json"
+[2025-08-14T19:52:33.670Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.672Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.672Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.673Z] Messages count:
+16
+[2025-08-14T19:52:33.674Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.676Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-15.json"
+[2025-08-14T19:52:33.832Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.833Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.834Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.835Z] Messages count:
+17
+[2025-08-14T19:52:33.835Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.837Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-16.json"
+[2025-08-14T19:52:33.972Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:33.973Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:33.974Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:33.974Z] Messages count:
+18
+[2025-08-14T19:52:33.975Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:33.977Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-17.json"
+[2025-08-14T19:52:34.138Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:34.139Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:34.140Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:34.141Z] Messages count:
+19
+[2025-08-14T19:52:34.141Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:34.144Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-18.json"
+[2025-08-14T19:52:34.278Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:34.279Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:34.280Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:34.281Z] Messages count:
+20
+[2025-08-14T19:52:34.282Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:34.284Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-19.json"
+[2025-08-14T19:52:34.432Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:34.433Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:34.434Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:34.434Z] Messages count:
+21
+[2025-08-14T19:52:34.435Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:34.437Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-20.json"
+[2025-08-14T19:52:34.569Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:34.570Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:34.571Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:34.572Z] Messages count:
+22
+[2025-08-14T19:52:34.573Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:34.575Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-21.json"
+[2025-08-14T19:52:34.723Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:34.724Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:34.725Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:34.726Z] Messages count:
+23
+[2025-08-14T19:52:34.726Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:34.729Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-22.json"
+[2025-08-14T19:52:34.879Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:34.880Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:34.881Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:34.883Z] Messages count:
+24
+[2025-08-14T19:52:34.883Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:34.886Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-23.json"
+[2025-08-14T19:52:35.034Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.035Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.036Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.037Z] Messages count:
+25
+[2025-08-14T19:52:35.037Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.040Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-24.json"
+[2025-08-14T19:52:35.178Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.179Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.180Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.181Z] Messages count:
+26
+[2025-08-14T19:52:35.182Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.184Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-25.json"
+[2025-08-14T19:52:35.334Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.336Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.336Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.337Z] Messages count:
+27
+[2025-08-14T19:52:35.338Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.340Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-26.json"
+[2025-08-14T19:52:35.477Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.479Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.480Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.481Z] Messages count:
+28
+[2025-08-14T19:52:35.482Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.484Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-27.json"
+[2025-08-14T19:52:35.634Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.635Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.636Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.637Z] Messages count:
+29
+[2025-08-14T19:52:35.638Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.640Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-28.json"
+[2025-08-14T19:52:35.772Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.774Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.776Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.777Z] Messages count:
+30
+[2025-08-14T19:52:35.779Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.782Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-29.json"
+[2025-08-14T19:52:35.938Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:35.939Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:35.940Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:35.941Z] Messages count:
+31
+[2025-08-14T19:52:35.942Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:35.944Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-30.json"
+[2025-08-14T19:52:36.090Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:36.092Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:36.093Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:36.094Z] Messages count:
+32
+[2025-08-14T19:52:36.095Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:36.098Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-31.json"
+[2025-08-14T19:52:36.244Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:36.245Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:36.246Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:36.247Z] Messages count:
+33
+[2025-08-14T19:52:36.247Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:36.250Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-32.json"
+[2025-08-14T19:52:36.392Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:36.394Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:36.394Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:36.395Z] Messages count:
+34
+[2025-08-14T19:52:36.396Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:36.398Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-33.json"
+[2025-08-14T19:52:36.550Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:36.551Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:36.552Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:36.552Z] Messages count:
+35
+[2025-08-14T19:52:36.553Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:36.556Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-34.json"
+[2025-08-14T19:52:36.700Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:36.701Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:36.702Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:36.702Z] Messages count:
+36
+[2025-08-14T19:52:36.703Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:36.705Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-35.json"
+[2025-08-14T19:52:36.871Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:36.872Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:36.873Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:36.874Z] Messages count:
+37
+[2025-08-14T19:52:36.875Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:36.879Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-36.json"
+[2025-08-14T19:52:37.028Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:37.031Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:37.032Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:37.033Z] Messages count:
+38
+[2025-08-14T19:52:37.033Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:37.036Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-37.json"
+[2025-08-14T19:52:37.188Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:37.189Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:37.190Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:37.191Z] Messages count:
+39
+[2025-08-14T19:52:37.191Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:37.194Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-38.json"
+[2025-08-14T19:52:37.336Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:37.337Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:37.338Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:37.339Z] Messages count:
+40
+[2025-08-14T19:52:37.340Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:37.342Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-39.json"
+[2025-08-14T19:52:37.521Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:37.522Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:37.523Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:37.524Z] Messages count:
+41
+[2025-08-14T19:52:37.525Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:37.527Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-40.json"
+[2025-08-14T19:52:37.669Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:37.670Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:37.671Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:37.672Z] Messages count:
+42
+[2025-08-14T19:52:37.673Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:37.675Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-41.json"
+[2025-08-14T19:52:37.877Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:37.878Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:37.879Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:37.879Z] Messages count:
+43
+[2025-08-14T19:52:37.880Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:37.882Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-42.json"
+[2025-08-14T19:52:38.084Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:38.085Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:38.087Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:38.089Z] Messages count:
+44
+[2025-08-14T19:52:38.090Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:38.095Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-43.json"
+[2025-08-14T19:52:38.303Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:38.305Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:38.305Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:38.306Z] Messages count:
+45
+[2025-08-14T19:52:38.307Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:38.310Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-44.json"
+[2025-08-14T19:52:38.455Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:38.456Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:38.457Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:38.458Z] Messages count:
+46
+[2025-08-14T19:52:38.459Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:38.461Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-45.json"
+[2025-08-14T19:52:38.624Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:38.625Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:38.626Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:38.627Z] Messages count:
+47
+[2025-08-14T19:52:38.628Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:38.630Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-46.json"
+[2025-08-14T19:52:38.764Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:38.765Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:38.766Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:38.767Z] Messages count:
+48
+[2025-08-14T19:52:38.768Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:38.770Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-47.json"
+[2025-08-14T19:52:38.947Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:38.948Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:38.949Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:38.949Z] Messages count:
+49
+[2025-08-14T19:52:38.950Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:38.953Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-48.json"
+[2025-08-14T19:52:39.088Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:39.089Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:39.090Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:39.091Z] Messages count:
+50
+[2025-08-14T19:52:39.091Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:39.094Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-49.json"
+[2025-08-14T19:52:39.243Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:39.244Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:39.245Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:39.246Z] Messages count:
+51
+[2025-08-14T19:52:39.247Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:39.249Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-50.json"
+[2025-08-14T19:52:39.388Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:39.390Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:39.391Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:39.392Z] Messages count:
+52
+[2025-08-14T19:52:39.393Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:39.395Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-51.json"
+[2025-08-14T19:52:39.546Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:39.548Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:39.549Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:39.549Z] Messages count:
+53
+[2025-08-14T19:52:39.550Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:39.553Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-52.json"
+[2025-08-14T19:52:39.698Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:39.700Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:39.701Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:39.702Z] Messages count:
+54
+[2025-08-14T19:52:39.703Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:39.706Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-53.json"
+[2025-08-14T19:52:39.858Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:39.859Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:39.860Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:39.861Z] Messages count:
+55
+[2025-08-14T19:52:39.862Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:39.866Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-54.json"
+[2025-08-14T19:52:40.009Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.011Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.012Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.013Z] Messages count:
+56
+[2025-08-14T19:52:40.014Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.016Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-55.json"
+[2025-08-14T19:52:40.165Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.167Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.168Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.168Z] Messages count:
+57
+[2025-08-14T19:52:40.169Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.171Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-56.json"
+[2025-08-14T19:52:40.319Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.321Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.323Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.325Z] Messages count:
+58
+[2025-08-14T19:52:40.327Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.333Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-57.json"
+[2025-08-14T19:52:40.482Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.485Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.486Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.487Z] Messages count:
+59
+[2025-08-14T19:52:40.488Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.490Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-58.json"
+[2025-08-14T19:52:40.645Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.647Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.648Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.650Z] Messages count:
+60
+[2025-08-14T19:52:40.651Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.655Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-59.json"
+[2025-08-14T19:52:40.811Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.812Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.814Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.815Z] Messages count:
+61
+[2025-08-14T19:52:40.816Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.820Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-60.json"
+[2025-08-14T19:52:40.960Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:40.963Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:40.966Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:40.967Z] Messages count:
+62
+[2025-08-14T19:52:40.968Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:40.971Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-61.json"
+[2025-08-14T19:52:41.128Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:41.129Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:41.130Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:41.131Z] Messages count:
+63
+[2025-08-14T19:52:41.132Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:41.134Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-62.json"
+[2025-08-14T19:52:41.276Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:41.277Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:41.278Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:41.279Z] Messages count:
+64
+[2025-08-14T19:52:41.279Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:41.282Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-63.json"
+[2025-08-14T19:52:41.483Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:41.485Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:41.486Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:41.487Z] Messages count:
+65
+[2025-08-14T19:52:41.488Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:41.490Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-64.json"
+[2025-08-14T19:52:41.645Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:41.646Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:41.647Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:41.647Z] Messages count:
+66
+[2025-08-14T19:52:41.648Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:41.651Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-65.json"
+[2025-08-14T19:52:41.794Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:41.796Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:41.797Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:41.798Z] Messages count:
+67
+[2025-08-14T19:52:41.799Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:41.802Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-66.json"
+[2025-08-14T19:52:41.959Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:41.961Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:41.962Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:41.963Z] Messages count:
+68
+[2025-08-14T19:52:41.964Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:41.968Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-67.json"
+[2025-08-14T19:52:42.121Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:42.122Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:42.124Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:42.125Z] Messages count:
+69
+[2025-08-14T19:52:42.127Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:42.132Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-68.json"
+[2025-08-14T19:52:42.292Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:42.293Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:42.294Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:42.295Z] Messages count:
+70
+[2025-08-14T19:52:42.295Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:42.298Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-69.json"
+[2025-08-14T19:52:42.497Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:42.499Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:42.500Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:42.502Z] Messages count:
+71
+[2025-08-14T19:52:42.503Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:42.508Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-70.json"
+[2025-08-14T19:52:42.659Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:42.663Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:42.665Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:42.668Z] Messages count:
+72
+[2025-08-14T19:52:42.669Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:42.674Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-71.json"
+[2025-08-14T19:52:42.826Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:42.829Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:42.833Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:42.835Z] Messages count:
+73
+[2025-08-14T19:52:42.838Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:42.844Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-72.json"
+[2025-08-14T19:52:43.001Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:43.004Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:43.006Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:43.008Z] Messages count:
+74
+[2025-08-14T19:52:43.009Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:43.017Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-73.json"
+[2025-08-14T19:52:43.209Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:43.211Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:43.212Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:43.214Z] Messages count:
+75
+[2025-08-14T19:52:43.215Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Tokens per hour limit exceeded - too many tokens processed.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"token_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:43.218Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-74.json"
+[2025-08-14T19:52:43.361Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:43.364Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
+[2025-08-14T19:52:43.366Z] Making API call to Groq with model:
+"qwen-3-coder-480b"
+[2025-08-14T19:52:43.368Z] Messages count:
+76
+[2025-08-14T19:52:43.370Z] Last few messages:
+[
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  },
+  {
+    "role": "system",
+    "content": "Previous API request failed with error: Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}. Please try a different approach or ask the user for clarification."
+  }
+]
+[2025-08-14T19:52:43.375Z] Equivalent curl command:
+"curl -X POST \"https://api.cerebras.com/v1/chat/completions\" \\\n  -H \"Authorization: Bearer csk-6h56...drtt6m5t\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @debug-request-75.json"
+[2025-08-14T19:52:43.555Z] Error occurred during API call:
+{}
+[2025-08-14T19:52:43.556Z] Error details:
+{
+  "message": "Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}",
+  "stack": "Error: Cerebras API error: {\"message\":\"Requests per second limit exceeded - too many requests sent.\",\"type\":\"too_many_requests_error\",\"param\":\"quota\",\"code\":\"request_quota_exceeded\"}\n    at Object.create (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/provider.js:26:39)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Agent.chat (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/core/agent.js:233:38)\n    at async file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/hooks/useAgent.js:176:13\n    at async handleSendMessage (file:///C:/Users/jmoya/Desktop/groq-code-cli-cerebras/dist/ui/components/core/Chat.js:73:13)"
+}
