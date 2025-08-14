@@ -1,7 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { Agent } from '../../core/agent.js';
 import { DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../../tools/tool-schemas.js';
+import { ConfigManager } from '../../utils/local-settings.js';
 
+const configManager = new ConfigManager();
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system' | 'tool' | 'tool_execution';
@@ -291,7 +293,8 @@ export function useAgent(
   }, [pendingMaxIterations]);
 
   const setApiKey = useCallback((apiKey: string) => {
-    agent.setApiKey(apiKey);
+    const provider = configManager.getProvider() || 'groq';
+    agent.setApiKey(provider, apiKey);
   }, [agent]);
 
   const toggleAutoApprove = useCallback(() => {

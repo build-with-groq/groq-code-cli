@@ -105,7 +105,13 @@ export default function ModelSelector({ onSubmit, onCancel, currentModel }: Mode
   );
 }
 
-const ProviderList = ({ providers, selectedIndex, currentProviderId }) => (
+interface ProviderListProps {
+  providers: typeof PROVIDERS;
+  selectedIndex: number;
+  currentProviderId: string | null;
+}
+
+const ProviderList: React.FC<ProviderListProps> = ({ providers, selectedIndex, currentProviderId }) => (
   <Box flexDirection="column" marginBottom={1}>
     {providers.map((provider, index) => (
       <Box key={provider.id} marginBottom={index === providers.length - 1 ? 0 : 1}>
@@ -123,7 +129,13 @@ const ProviderList = ({ providers, selectedIndex, currentProviderId }) => (
   </Box>
 );
 
-const ModelList = ({ models, selectedIndex, currentModelId }) => (
+interface ModelListProps {
+  models: typeof PROVIDERS[0]['models'];
+  selectedIndex: number;
+  currentModelId?: string;
+}
+
+const ModelList: React.FC<ModelListProps> = ({ models, selectedIndex, currentModelId }) => (
   <Box flexDirection="column" marginBottom={1}>
     {models.map((model, index) => (
       <Box key={model.id} marginBottom={index === models.length - 1 ? 0 : 1}>
