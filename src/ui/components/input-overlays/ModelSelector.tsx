@@ -17,7 +17,9 @@ const PROVIDERS = [
     { id: 'mixtral-8x7b-32768', name: 'Mixtral-8x7b-32768', description: 'Large, fast, and capable model' },
   ]},
   { id: 'cerebras', name: 'Cerebras', models: [
-    { id: 'btlm-3b-8k-base', name: 'BTLM-3B-8k-base', description: 'Small, fast, and cheap model' },
+    { id: 'llama3.1-8b', name: 'LLaMA3.1-8B', description: 'Small, fast, and cheap model' },
+    { id: 'llama3.1-70b', name: 'LLaMA3.1-70B', description: 'Large, fast, and capable model' },
+    { id: 'llama3.3-70b', name: 'LLaMA3.3-70B', description: 'Large, fast, and capable model' },
   ]},
 ];
 
