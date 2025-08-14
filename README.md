@@ -113,6 +113,7 @@ export GROQ_API_KEY=your_api_key_here
 - `/model` - Select your Groq model
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
+- `/stats` - Display session statistics and token usage
 
 
 ## Development

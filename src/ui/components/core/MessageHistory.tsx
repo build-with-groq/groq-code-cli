@@ -2,14 +2,27 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Text } from 'ink';
 import { ChatMessage } from '../../hooks/useAgent.js';
 import ToolHistoryItem from '../display/ToolHistoryItem.js';
+import Stats from '../display/Stats.js';
 import { parseMarkdown, MarkdownElement, parseInlineElements } from '../../../utils/markdown.js';
+
+interface Usage {
+  queue_time: number;
+  prompt_tokens: number;
+  prompt_time: number;
+  completion_tokens: number;
+  completion_time: number;
+  total_tokens: number;
+  total_requests?: number;
+  total_time: number;
+}
 
 interface MessageHistoryProps {
   messages: ChatMessage[];
   showReasoning?: boolean;
+  usageData?: Usage;
 }
 
-export default function MessageHistory({ messages, showReasoning = true }: MessageHistoryProps) {
+export default function MessageHistory({ messages, showReasoning = true, usageData }: MessageHistoryProps) {
   const scrollRef = useRef<any>(null);
 
   // Auto-scroll to bottom when new messages are added
@@ -92,6 +105,15 @@ export default function MessageHistory({ messages, showReasoning = true }: Messa
         );
         
       case 'system':
+        // Handle special system message types
+        if (message.type === 'stats') {
+          return (
+            <Box key={message.id} marginBottom={1}>
+              <Stats usage={message.usageSnapshot || usageData} />
+            </Box>
+          );
+        }
+        
         return (
           <Box key={message.id} marginBottom={1}>
             <Text color="yellow" italic>

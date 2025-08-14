@@ -9,6 +9,17 @@ export interface ChatMessage {
   reasoning?: string;
   timestamp: Date;
   toolExecution?: ToolExecution;
+  type?: string;
+  usageSnapshot?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+    total_requests: number;
+    total_time: number;
+    queue_time: number;
+    prompt_time: number;
+    completion_time: number;
+  };
 }
 
 export interface ToolExecution {
@@ -23,7 +34,7 @@ export interface ToolExecution {
 export function useAgent(
   agent: Agent, 
   onStartRequest?: () => void,
-  onAddApiTokens?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => void, 
+  onAddApiTokens?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void, 
   onPauseRequest?: () => void,
   onResumeRequest?: () => void,
   onCompleteRequest?: () => void
@@ -152,7 +163,7 @@ export function useAgent(
           setCurrentToolExecution(null);
           currentExecutionIdRef.current = null;
         },
-        onApiUsage: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => {
+        onApiUsage: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => {
           // Pass API usage data to token metrics
           if (onAddApiTokens) {
             onAddApiTokens(usage);

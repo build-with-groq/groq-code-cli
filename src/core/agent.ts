@@ -28,7 +28,7 @@ export class Agent {
   private onThinkingText?: (content: string, reasoning?: string) => void;
   private onFinalMessage?: (content: string, reasoning?: string) => void;
   private onMaxIterations?: (maxIterations: number) => Promise<boolean>;
-  private onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => void;
+  private onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void;
   private requestCount: number = 0;
   private currentAbortController: AbortController | null = null;
   private isInterrupted: boolean = false;
@@ -138,7 +138,7 @@ When asked about your identity, you should identify yourself as a coding assista
     onThinkingText?: (content: string) => void;
     onFinalMessage?: (content: string) => void;
     onMaxIterations?: (maxIterations: number) => Promise<boolean>;
-    onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => void;
+    onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void;
   }) {
     this.onToolStart = callbacks.onToolStart;
     this.onToolEnd = callbacks.onToolEnd;
@@ -311,7 +311,8 @@ When asked about your identity, you should identify yourself as a coding assista
             this.onApiUsage({
               prompt_tokens: response.usage.prompt_tokens,
               completion_tokens: response.usage.completion_tokens,
-              total_tokens: response.usage.total_tokens
+              total_tokens: response.usage.total_tokens,
+              total_time: response.usage.total_time
             });
           }
           debugLog('Message content length:', message.content?.length || 0);
