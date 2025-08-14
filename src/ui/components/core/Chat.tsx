@@ -11,10 +11,13 @@ import Login from '../input-overlays/Login.js';
 import ModelSelector from '../input-overlays/ModelSelector.js';
 import MaxIterationsContinue from '../input-overlays/MaxIterationsContinue.js';
 import { handleSlashCommand } from '../../../commands/index.js';
+import { ConfigManager } from '../../../utils/local-settings.js';
 
 interface ChatProps {
   agent: Agent;
 }
+
+const configManager = new ConfigManager();
 
 export default function Chat({ agent }: ChatProps) {
   const {
@@ -125,8 +128,9 @@ export default function Chat({ agent }: ChatProps) {
 
   const handleLogin = (apiKey: string) => {
     setShowLogin(false);
+    const provider = configManager.getProvider() || 'groq';
     // Save the API key persistently
-    agent.saveApiKey(apiKey);
+    agent.saveApiKey(provider, apiKey);
     addMessage({
       role: 'system',
       content: 'API key saved successfully. You can now start chatting with the assistant.',

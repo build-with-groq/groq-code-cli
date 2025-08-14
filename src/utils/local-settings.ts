@@ -3,8 +3,9 @@ import * as path from 'path';
 import * as os from 'os';
 
 interface Config {
-  groqApiKey?: string;
+  apiKeys?: { [provider: string]: string };
   defaultModel?: string;
+  provider?: string;
 }
 
 const CONFIG_DIR = '.groq'; // In home directory
@@ -25,7 +26,7 @@ export class ConfigManager {
     }
   }
 
-  public getApiKey(): string | null {
+  public getApiKey(provider: string): string | null {
     try {
       if (!fs.existsSync(this.configPath)) {
         return null;
@@ -33,14 +34,14 @@ export class ConfigManager {
 
       const configData = fs.readFileSync(this.configPath, 'utf8');
       const config: Config = JSON.parse(configData);
-      return config.groqApiKey || null;
+      return config.apiKeys?.[provider] || null;
     } catch (error) {
       console.warn('Failed to read config file:', error);
       return null;
     }
   }
 
-  public setApiKey(apiKey: string): void {
+  public setApiKey(provider: string, apiKey: string): void {
     try {
       this.ensureConfigDir();
 
@@ -50,7 +51,10 @@ export class ConfigManager {
         config = JSON.parse(configData);
       }
 
-      config.groqApiKey = apiKey;
+      if (!config.apiKeys) {
+        config.apiKeys = {};
+      }
+      config.apiKeys[provider] = apiKey;
 
       fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2), {
         mode: 0o600 // Read/write for owner only
@@ -60,7 +64,7 @@ export class ConfigManager {
     }
   }
 
-  public clearApiKey(): void {
+  public clearApiKey(provider: string): void {
     try {
       if (!fs.existsSync(this.configPath)) {
         return;
@@ -68,7 +72,14 @@ export class ConfigManager {
 
       const configData = fs.readFileSync(this.configPath, 'utf8');
       const config: Config = JSON.parse(configData);
-      delete config.groqApiKey;
+
+      if (config.apiKeys?.[provider]) {
+        delete config.apiKeys[provider];
+      }
+
+      if (Object.keys(config.apiKeys || {}).length === 0) {
+        delete config.apiKeys;
+      }
 
       if (Object.keys(config).length === 0) {
         fs.unlinkSync(this.configPath);
@@ -114,6 +125,41 @@ export class ConfigManager {
       });
     } catch (error) {
       throw new Error(`Failed to save default model: ${error}`);
+    }
+  }
+
+  public getProvider(): string | null {
+    try {
+      if (!fs.existsSync(this.configPath)) {
+        return null;
+      }
+
+      const configData = fs.readFileSync(this.configPath, 'utf8');
+      const config: Config = JSON.parse(configData);
+      return config.provider || null;
+    } catch (error) {
+      console.warn('Failed to read provider:', error);
+      return null;
+    }
+  }
+
+  public setProvider(provider: string): void {
+    try {
+      this.ensureConfigDir();
+
+      let config: Config = {};
+      if (fs.existsSync(this.configPath)) {
+        const configData = fs.readFileSync(this.configPath, 'utf8');
+        config = JSON.parse(configData);
+      }
+
+      config.provider = provider;
+
+      fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2), {
+        mode: 0o600 // Read/write for owner only
+      });
+    } catch (error) {
+      throw new Error(`Failed to save provider: ${error}`);
     }
   }
 }

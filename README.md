@@ -1,9 +1,9 @@
 <h2 align="center">
  <br>
- <img src="docs/thumbnail.png" alt="Groq Code CLI" width="400">
+ <img src="docs/thumbnail.png" alt="Code CLI" width="400">
  <br>
  <br>
- Groq Code CLI: A highly customizable, lightweight, and open-source coding CLI powered by Groq for instant iteration.
+ Code CLI: A highly customizable, lightweight, and open-source coding CLI powered by Groq and Cerebras for instant iteration.
  <br>
 </h2>
 
@@ -29,9 +29,9 @@ https://github.com/user-attachments/assets/5902fd07-1882-4ee7-825b-50d627f8c96a
 
 # Overview
 
-Coding CLIs are everywhere. The Groq Code CLI is different. It is a blueprint, a building block, for developers looking to leverage, customize, and extend a CLI to be entirely their own. Leading open-source CLIs are all fantastic, inspiring for the open-source community, and hugely rich in features. However, that's just it: they are *gigantic*. Feature-rich: yes, but local development with such a large and interwoven codebase is unfriendly and overwhelming. **This is a project for developers looking to dive in.**
+Coding CLIs are everywhere. The Code CLI is different. It is a blueprint, a building block, for developers looking to leverage, customize, and extend a CLI to be entirely their own. Leading open-source CLIs are all fantastic, inspiring for the open-source community, and hugely rich in features. However, that's just it: they are *gigantic*. Feature-rich: yes, but local development with such a large and interwoven codebase is unfriendly and overwhelming. **This is a project for developers looking to dive in.**
 
-Groq Code CLI is your chance to make a CLI truly your own. Equipped with all of the features, tools, commands, and UI/UX that’s familiar to your current favorite CLI, we make it simple to add new features you’ve always wanted. By massively cutting down on bloat and code mass without compromising on quality, you can jump into modifying this CLI however you see fit. By leveraging models on Groq, you can iterate even faster (`/models` to see available models). Simply activate the CLI by typing `groq` in your terminal. Use Groq Code CLI in any directory just like you would with any other coding CLI. Use it in this directory to have it build and customize itself!
+This Code CLI is your chance to make a CLI truly your own. Equipped with all of the features, tools, commands, and UI/UX that’s familiar to your current favorite CLI, we make it simple to add new features you’ve always wanted. By massively cutting down on bloat and code mass without compromising on quality, you can jump into modifying this CLI however you see fit. By leveraging models on Groq or Cerebras, you can iterate even faster (`/model` to see available models). Simply activate the CLI by typing `groq` in your terminal. Use this Code CLI in any directory just like you would with any other coding CLI. Use it in this directory to have it build and customize itself!
 
 A few customization ideas to get started:
 - New slash commands (e.g. /mcp, /deadcode, /complexity, etc.)
@@ -98,7 +98,7 @@ groq
 And type the `/login` command:
 
 ![Login](docs/login.png)
->Get your API key from the <strong>Groq Console</strong> [here](https://console.groq.com/keys)
+>Get your API key from the <strong>Groq Console</strong> [here](https://console.groq.com/keys) or the <strong>Cerebras Console</strong> [here](https://docs.cerebras.net/en/latest/wsc/getting-started/authentication.html)
 
 This creates a .groq/ folder in your home directory that stores your API key, default model selection, and any other config you wish to add.
 
@@ -110,7 +110,7 @@ export GROQ_API_KEY=your_api_key_here
 ### Available Commands
 - `/help` - Show help and available commands
 - `/login` - Login with your credentials
-- `/model` - Select your Groq model
+- `/model` - Select your AI provider and model
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
 

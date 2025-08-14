@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
+import { ConfigManager } from '../../../utils/local-settings.js';
 
 interface LoginProps {
   onSubmit: (apiKey: string) => void;
   onCancel: () => void;
 }
 
+const configManager = new ConfigManager();
+
 export default function Login({ onSubmit, onCancel }: LoginProps) {
   const [apiKey, setApiKey] = useState('');
+  const provider = configManager.getProvider() || 'groq';
 
   useInput((input, key) => {
     if (key.return) {
@@ -41,12 +45,12 @@ export default function Login({ onSubmit, onCancel }: LoginProps) {
   return (
     <Box flexDirection="column" marginBottom={1}>
       <Box marginBottom={1}>
-        <Text color="cyan" bold>Login with Groq API Key</Text>
+        <Text color="cyan" bold>Login with {provider} API Key</Text>
       </Box>
       
       <Box marginBottom={1}>
         <Text color="gray">
-          Enter your Groq API key to continue. You can get one from <Text underline>https://console.groq.com/keys</Text>
+          Enter your {provider} API key to continue.
         </Text>
       </Box>
 

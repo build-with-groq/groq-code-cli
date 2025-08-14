@@ -1,5 +1,5 @@
-import Groq from 'groq-sdk';
 import { executeTool } from '../tools/tools.js';
+import { getAIClient } from './provider.js';
 import { validateReadBeforeEdit, getReadBeforeEditError } from '../tools/validators.js';
 import { ALL_TOOL_SCHEMAS, DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../tools/tool-schemas.js';
 import { ConfigManager } from '../utils/local-settings.js';
@@ -14,7 +14,7 @@ interface Message {
 }
 
 export class Agent {
-  private client: Groq | null = null;
+  private client: any | null = null;
   private messages: Message[] = [];
   private apiKey: string | null = null;
   private model: string;
@@ -78,7 +78,7 @@ export class Agent {
   }
 
   private buildDefaultSystemMessage(): string {
-    return `You are a coding assistant powered by ${this.model} on Groq. Tools are available to you. Use tools to complete tasks.
+    return `You are a coding assistant powered by ${this.model}. Tools are available to you. Use tools to complete tasks.
 
 CRITICAL: For ANY implementation request (building apps, creating components, writing code), you MUST use tools to create actual files. NEVER provide text-only responses for coding tasks that require implementation.
 
@@ -127,7 +127,7 @@ Be direct and efficient.
 
 Don't generate markdown tables.
 
-When asked about your identity, you should identify yourself as a coding assistant running on the ${this.model} model via Groq.`;
+When asked about your identity, you should identify yourself as a coding assistant running on the ${this.model} model.`;
   }
 
 
@@ -149,21 +149,21 @@ When asked about your identity, you should identify yourself as a coding assista
     this.onApiUsage = callbacks.onApiUsage;
   }
 
-  public setApiKey(apiKey: string): void {
+  public setApiKey(provider: string, apiKey: string): void {
     debugLog('Setting API key in agent...');
     debugLog('API key provided:', apiKey ? `${apiKey.substring(0, 8)}...` : 'empty');
     this.apiKey = apiKey;
-    this.client = new Groq({ apiKey });
-    debugLog('Groq client initialized with provided API key');
+    this.client = getAIClient(provider, apiKey);
+    debugLog(`${provider} client initialized with provided API key`);
   }
 
-  public saveApiKey(apiKey: string): void {
-    this.configManager.setApiKey(apiKey);
-    this.setApiKey(apiKey);
+  public saveApiKey(provider: string, apiKey: string): void {
+    this.configManager.setApiKey(provider, apiKey);
+    this.setApiKey(provider, apiKey);
   }
 
-  public clearApiKey(): void {
-    this.configManager.clearApiKey();
+  public clearApiKey(provider: string): void {
+    this.configManager.clearApiKey(provider);
     this.apiKey = null;
     this.client = null;
   }
@@ -217,25 +217,26 @@ When asked about your identity, you should identify yourself as a coding assista
     
     // Check API key on first message send
     if (!this.client) {
-      debugLog('Initializing Groq client...');
+      const provider = this.configManager.getProvider() || 'groq';
+      debugLog(`Initializing ${provider} client...`);
       // Try environment variable first
       const envApiKey = process.env.GROQ_API_KEY;
       if (envApiKey) {
         debugLog('Using API key from environment variable');
-        this.setApiKey(envApiKey);
+        this.setApiKey(provider, envApiKey);
       } else {
         // Try config file
         debugLog('Environment variable GROQ_API_KEY not found, checking config file');
-        const configApiKey = this.configManager.getApiKey();
+        const configApiKey = this.configManager.getApiKey(provider);
         if (configApiKey) {
           debugLog('Using API key from config file');
-          this.setApiKey(configApiKey);
+          this.setApiKey(provider, configApiKey);
         } else {
           debugLog('No API key found anywhere');
-          throw new Error('No API key available. Please use /login to set your Groq API key.');
+          throw new Error('No API key available. Please use /login to set your API key.');
         }
       }
-      debugLog('Groq client initialized successfully');
+      debugLog('Client initialized successfully');
     }
 
     // Add user message
@@ -276,7 +277,8 @@ When asked about your identity, you should identify yourself as a coding assista
           
           // Log equivalent curl command
           this.requestCount++;
-          const curlCommand = generateCurlCommand(this.apiKey!, requestBody, this.requestCount);
+          const provider = this.configManager.getProvider() || 'groq';
+          const curlCommand = generateCurlCommand(this.apiKey!, requestBody, this.requestCount, provider);
           if (curlCommand) {
             debugLog('Equivalent curl command:', curlCommand);
           }
@@ -596,7 +598,7 @@ function debugLog(message: string, data?: any) {
   fs.appendFileSync(DEBUG_LOG_FILE, logEntry);
 }
 
-function generateCurlCommand(apiKey: string, requestBody: any, requestCount: number): string {
+function generateCurlCommand(apiKey: string, requestBody: any, requestCount: number, provider: string): string {
   if (!debugEnabled) return '';
   
   const maskedApiKey = `${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 8)}`;
@@ -606,7 +608,9 @@ function generateCurlCommand(apiKey: string, requestBody: any, requestCount: num
   const jsonFilePath = path.join(process.cwd(), jsonFileName);
   fs.writeFileSync(jsonFilePath, JSON.stringify(requestBody, null, 2));
   
-  const curlCmd = `curl -X POST "https://api.groq.com/openai/v1/chat/completions" \\
+  const url = provider === 'cerebras' ? 'https://api.cerebras.com/v1/chat/completions' : 'https://api.groq.com/openai/v1/chat/completions';
+
+  const curlCmd = `curl -X POST "${url}" \\
   -H "Authorization: Bearer ${maskedApiKey}" \\
   -H "Content-Type: application/json" \\
   -d @${jsonFileName}`;
