@@ -9,6 +9,9 @@ interface Usage {
   total_tokens: number;
   total_requests?: number;
   total_time: number;
+  prompt_tokens_details?: {
+    cached_tokens: number;
+  };
 }
 
 interface StatsProps {
@@ -29,11 +32,17 @@ export default function Stats({ usage }: StatsProps) {
   };
 
   // Extract values from API response
+  const cachedTokens = usage?.prompt_tokens_details?.cached_tokens || 0;
+  const promptTokens = usage?.prompt_tokens || 0;
+  const cachedPercent = promptTokens > 0 ? ((cachedTokens / promptTokens) * 100).toFixed(1) : 0;
+
   const stats = {
     totalRequests: usage?.total_requests || 0,
     processingTime: formatTime(usage?.total_time || 0),
-    promptTokens: usage?.prompt_tokens || 0,
+    promptTokens: promptTokens,
     completionTokens: usage?.completion_tokens || 0,
+    cachedTokens,
+    cachedPercent,
   };
 
   return (
@@ -71,6 +80,12 @@ export default function Stats({ usage }: StatsProps) {
             <Text color="green" bold>{stats.completionTokens.toLocaleString()}</Text>
             <Text color="gray" dimColor>Output Tokens</Text>
           </Box>
+          {usage?.prompt_tokens_details && (
+            <Box flexDirection="column" alignItems="center" paddingX={3}>
+              <Text color="magenta" bold>{stats.cachedTokens.toLocaleString()} ({stats.cachedPercent}%)</Text>
+              <Text color="gray" dimColor>Cached</Text>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>
