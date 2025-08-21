@@ -55,6 +55,10 @@ export function useAgent(
     maxIterations: number;
     resolve: (shouldContinue: boolean) => void;
   } | null>(null);
+  const [pendingError, setPendingError] = useState<{
+    error: string;
+    resolve: (shouldRetry: boolean) => void;
+  } | null>(null);
 
   const addMessage = useCallback((message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     const newMessage: ChatMessage = {
@@ -236,6 +240,27 @@ export function useAgent(
             });
           });
         },
+        onError: async (error: string) => {
+          // Pause metrics while waiting for retry decision
+          if (onPauseRequest) {
+            onPauseRequest();
+          }
+          
+          return new Promise<boolean>((resolve) => {
+            setPendingError({
+              error,
+              resolve: (shouldRetry: boolean) => {
+                
+                // Resume metrics after decision
+                if (onResumeRequest) {
+                  onResumeRequest();
+                }
+                
+                resolve(shouldRetry);
+              }
+            });
+          });
+        },
       });
 
       await agent.chat(userInput);
@@ -301,6 +326,13 @@ export function useAgent(
     }
   }, [pendingMaxIterations]);
 
+  const respondToError = useCallback((shouldRetry: boolean) => {
+    if (pendingError) {
+      pendingError.resolve(shouldRetry);
+      setPendingError(null);
+    }
+  }, [pendingError]);
+
   const setApiKey = useCallback((apiKey: string) => {
     agent.setApiKey(apiKey);
   }, [agent]);
@@ -341,11 +373,13 @@ export function useAgent(
     currentToolExecution,
     pendingApproval,
     pendingMaxIterations,
+    pendingError,
     sessionAutoApprove,
     showReasoning,
     sendMessage,
     approveToolExecution,
     respondToMaxIterations,
+    respondToError,
     addMessage,
     setApiKey,
     clearHistory,

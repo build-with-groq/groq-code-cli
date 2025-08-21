@@ -32,6 +32,7 @@ export class Agent {
   private onFinalMessage?: (content: string, reasoning?: string) => void;
   private onMaxIterations?: (maxIterations: number) => Promise<boolean>;
   private onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void;
+  private onError?: (error: string) => Promise<boolean>;
   private requestCount: number = 0;
   private currentAbortController: AbortController | null = null;
   private isInterrupted: boolean = false;
@@ -146,6 +147,7 @@ When asked about your identity, you should identify yourself as a coding assista
     onFinalMessage?: (content: string) => void;
     onMaxIterations?: (maxIterations: number) => Promise<boolean>;
     onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void;
+    onError?: (error: string) => Promise<boolean>;
   }) {
     this.onToolStart = callbacks.onToolStart;
     this.onToolEnd = callbacks.onToolEnd;
@@ -154,6 +156,7 @@ When asked about your identity, you should identify yourself as a coding assista
     this.onFinalMessage = callbacks.onFinalMessage;
     this.onMaxIterations = callbacks.onMaxIterations;
     this.onApiUsage = callbacks.onApiUsage;
+    this.onError = callbacks.onError;
   }
 
   public setApiKey(apiKey: string): void {
@@ -468,15 +471,33 @@ When asked about your identity, you should identify yourself as a coding assista
             throw new Error(`${errorMessage}. Please check your API key and use /login to set a valid key.`);
           }
           
-          // Add error context to conversation for model to see and potentially recover
-          this.messages.push({
-            role: 'system',
-            content: `Previous API request failed with error: ${errorMessage}. Please try a different approach or ask the user for clarification.`
-          });
-          
-          // Continue conversation loop to let model attempt recovery
-          iteration++;
-          continue;
+          // Ask user if they want to retry via callback
+          if (this.onError) {
+            const shouldRetry = await this.onError(errorMessage);
+            if (shouldRetry) {
+              // User wants to retry - continue the loop without adding error to conversation
+              iteration++;
+              continue;
+            } else {
+              // User chose not to retry - add error message and return
+              this.messages.push({
+                role: 'system',
+                content: `Request failed with error: ${errorMessage}. User chose not to retry.`
+              });
+              return;
+            }
+          } else {
+            // No error callback available - use old behavior
+            // Add error context to conversation for model to see and potentially recover
+            this.messages.push({
+              role: 'system',
+              content: `Previous API request failed with error: ${errorMessage}. Please try a different approach or ask the user for clarification.`
+            });
+            
+            // Continue conversation loop to let model attempt recovery
+            iteration++;
+            continue;
+          }
         }
       }
 

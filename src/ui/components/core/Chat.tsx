@@ -11,6 +11,7 @@ import PendingToolApproval from '../input-overlays/PendingToolApproval.js';
 import Login from '../input-overlays/Login.js';
 import ModelSelector from '../input-overlays/ModelSelector.js';
 import MaxIterationsContinue from '../input-overlays/MaxIterationsContinue.js';
+import ErrorRetry from '../input-overlays/ErrorRetry.js';
 import { handleSlashCommand } from '../../../commands/index.js';
 
 interface ChatProps {
@@ -61,11 +62,13 @@ export default function Chat({ agent }: ChatProps) {
     currentToolExecution,
     pendingApproval,
     pendingMaxIterations,
+    pendingError,
     sessionAutoApprove,
     showReasoning,
     sendMessage,
     approveToolExecution,
     respondToMaxIterations,
+    respondToError,
     addMessage,
     setApiKey,
     clearHistory,
@@ -89,8 +92,12 @@ export default function Chat({ agent }: ChatProps) {
       toggleAutoApprove();
     }
     if (key.escape) {
+      // If waiting for error retry decision, cancel retry
+      if (pendingError) {
+        handleErrorCancel();
+      }
       // If waiting for tool approval, reject the tool
-      if (pendingApproval) {
+      else if (pendingApproval) {
         handleApproval(false);
       }
       // If model is actively processing (but not waiting for approval or executing tools after approval)
@@ -102,12 +109,21 @@ export default function Chat({ agent }: ChatProps) {
         setInputValue('');
       }
     }
+    
+    // Handle error retry keys
+    if (pendingError) {
+      if (input.toLowerCase() === 'r') {
+        handleErrorRetry();
+      } else if (input.toLowerCase() === 'c') {
+        handleErrorCancel();
+      }
+    }
   });
 
-  // Hide input when processing, waiting for approval, or showing login/model selector
+  // Hide input when processing, waiting for approval, error retry, or showing login/model selector
   useEffect(() => {
-    setShowInput(!isProcessing && !pendingApproval && !showLogin && !showModelSelector);
-  }, [isProcessing, pendingApproval, showLogin, showModelSelector]);
+    setShowInput(!isProcessing && !pendingApproval && !pendingError && !showLogin && !showModelSelector);
+  }, [isProcessing, pendingApproval, pendingError, showLogin, showModelSelector]);
 
 
   const handleSendMessage = async (message: string) => {
@@ -138,6 +154,14 @@ export default function Chat({ agent }: ChatProps) {
 
   const handleApproval = (approved: boolean, autoApproveSession?: boolean) => {
     approveToolExecution(approved, autoApproveSession);
+  };
+
+  const handleErrorRetry = () => {
+    respondToError(true);
+  };
+
+  const handleErrorCancel = () => {
+    respondToError(false);
   };
 
   const handleLogin = (apiKey: string) => {
@@ -224,6 +248,12 @@ export default function Chat({ agent }: ChatProps) {
             maxIterations={pendingMaxIterations.maxIterations}
             onContinue={() => respondToMaxIterations(true)}
             onStop={() => respondToMaxIterations(false)}
+          />
+        ) : pendingError ? (
+          <ErrorRetry
+            error={pendingError.error}
+            onRetry={handleErrorRetry}
+            onCancel={handleErrorCancel}
           />
         ) : showLogin ? (
           <Login
