@@ -5,6 +5,13 @@ export interface CommandContext {
   setShowModelSelector?: (show: boolean) => void;
   toggleReasoning?: () => void;
   showReasoning?: boolean;
+  sessionStats?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+    totalRequests: number;
+    totalTime: number;
+  };
 }
 
 export interface CommandDefinition {

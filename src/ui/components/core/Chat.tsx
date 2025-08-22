@@ -3,6 +3,7 @@ import { Box, Text, useInput, useApp } from 'ink';
 import { Agent } from '../../../core/agent.js';
 import { useAgent } from '../../hooks/useAgent.js';
 import { useTokenMetrics } from '../../hooks/useTokenMetrics.js';
+import { useSessionStats } from '../../hooks/useSessionStats.js';
 import MessageHistory from './MessageHistory.js';
 import MessageInput from './MessageInput.js';
 import TokenMetrics from '../display/TokenMetrics.js';
@@ -10,6 +11,7 @@ import PendingToolApproval from '../input-overlays/PendingToolApproval.js';
 import Login from '../input-overlays/Login.js';
 import ModelSelector from '../input-overlays/ModelSelector.js';
 import MaxIterationsContinue from '../input-overlays/MaxIterationsContinue.js';
+import ErrorRetry from '../input-overlays/ErrorRetry.js';
 import { handleSlashCommand } from '../../../commands/index.js';
 
 interface ChatProps {
@@ -32,10 +34,22 @@ export default function Chat({ agent }: ChatProps) {
     resetMetrics,
   } = useTokenMetrics();
 
+  const {
+    sessionStats,
+    addSessionTokens,
+    clearSessionStats,
+  } = useSessionStats();
+
+  // Wrapper function to add tokens to both per-request and session totals
+  const handleApiTokens = (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => {
+    addApiTokens(usage);      // Add to current request metrics
+    addSessionTokens(usage);  // Add to cumulative session stats
+  };
+
   const agentHook = useAgent(
     agent, 
     startRequest,      // Start tracking on new request
-    addApiTokens,      // Add API usage tokens throughout the request
+    handleApiTokens,   // Add API usage tokens to both request and session totals
     pauseMetrics,      // Pause during approval
     resumeMetrics,     // Resume after approval
     completeRequest    // Complete when agent is done
@@ -48,11 +62,13 @@ export default function Chat({ agent }: ChatProps) {
     currentToolExecution,
     pendingApproval,
     pendingMaxIterations,
+    pendingError,
     sessionAutoApprove,
     showReasoning,
     sendMessage,
     approveToolExecution,
     respondToMaxIterations,
+    respondToError,
     addMessage,
     setApiKey,
     clearHistory,
@@ -76,8 +92,12 @@ export default function Chat({ agent }: ChatProps) {
       toggleAutoApprove();
     }
     if (key.escape) {
+      // If waiting for error retry decision, cancel retry
+      if (pendingError) {
+        handleErrorCancel();
+      }
       // If waiting for tool approval, reject the tool
-      if (pendingApproval) {
+      else if (pendingApproval) {
         handleApproval(false);
       }
       // If model is actively processing (but not waiting for approval or executing tools after approval)
@@ -89,12 +109,21 @@ export default function Chat({ agent }: ChatProps) {
         setInputValue('');
       }
     }
+    
+    // Handle error retry keys
+    if (pendingError) {
+      if (input.toLowerCase() === 'r') {
+        handleErrorRetry();
+      } else if (input.toLowerCase() === 'c') {
+        handleErrorCancel();
+      }
+    }
   });
 
-  // Hide input when processing, waiting for approval, or showing login/model selector
+  // Hide input when processing, waiting for approval, error retry, or showing login/model selector
   useEffect(() => {
-    setShowInput(!isProcessing && !pendingApproval && !showLogin && !showModelSelector);
-  }, [isProcessing, pendingApproval, showLogin, showModelSelector]);
+    setShowInput(!isProcessing && !pendingApproval && !pendingError && !showLogin && !showModelSelector);
+  }, [isProcessing, pendingApproval, pendingError, showLogin, showModelSelector]);
 
 
   const handleSendMessage = async (message: string) => {
@@ -105,11 +134,15 @@ export default function Chat({ agent }: ChatProps) {
       if (message.startsWith('/')) {
         handleSlashCommand(message, {
           addMessage,
-          clearHistory,
+          clearHistory: () => {
+            clearHistory();
+            clearSessionStats();
+          },
           setShowLogin,
           setShowModelSelector,
           toggleReasoning,
           showReasoning,
+          sessionStats,
         });
         return;
       }
@@ -121,6 +154,14 @@ export default function Chat({ agent }: ChatProps) {
 
   const handleApproval = (approved: boolean, autoApproveSession?: boolean) => {
     approveToolExecution(approved, autoApproveSession);
+  };
+
+  const handleErrorRetry = () => {
+    respondToError(true);
+  };
+
+  const handleErrorCancel = () => {
+    respondToError(false);
   };
 
   const handleLogin = (apiKey: string) => {
@@ -143,8 +184,9 @@ export default function Chat({ agent }: ChatProps) {
 
   const handleModelSelect = (model: string) => {
     setShowModelSelector(false);
-    // Clear chat history when switching models
+    // Clear chat history and session stats when switching models
     clearHistory();
+    clearSessionStats();
     // Set the new model on the agent
     agent.setModel(model);
     addMessage({
@@ -165,7 +207,20 @@ export default function Chat({ agent }: ChatProps) {
     <Box flexDirection="column" height="100%">
       {/* Chat messages area */}
       <Box flexGrow={1} flexDirection="column" paddingX={1}>
-        <MessageHistory messages={messages} showReasoning={showReasoning} />
+        <MessageHistory 
+          messages={messages} 
+          showReasoning={showReasoning} 
+          usageData={{
+            prompt_tokens: sessionStats.promptTokens,
+            completion_tokens: sessionStats.completionTokens,
+            total_tokens: sessionStats.totalTokens,
+            total_requests: sessionStats.totalRequests,
+            total_time: sessionStats.totalTime,
+            queue_time: 0,
+            prompt_time: 0,
+            completion_time: 0,
+          }}
+        />
       </Box>
 
       {/* Token metrics */}
@@ -193,6 +248,12 @@ export default function Chat({ agent }: ChatProps) {
             maxIterations={pendingMaxIterations.maxIterations}
             onContinue={() => respondToMaxIterations(true)}
             onStop={() => respondToMaxIterations(false)}
+          />
+        ) : pendingError ? (
+          <ErrorRetry
+            error={pendingError.error}
+            onRetry={handleErrorRetry}
+            onCancel={handleErrorCancel}
           />
         ) : showLogin ? (
           <Login

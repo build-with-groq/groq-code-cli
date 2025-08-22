@@ -1,8 +1,10 @@
 import Groq from 'groq-sdk';
+import type { ClientOptions } from 'groq-sdk';
 import { executeTool } from '../tools/tools.js';
 import { validateReadBeforeEdit, getReadBeforeEditError } from '../tools/validators.js';
 import { ALL_TOOL_SCHEMAS, DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../tools/tool-schemas.js';
 import { ConfigManager } from '../utils/local-settings.js';
+import { getProxyAgent, getProxyInfo } from '../utils/proxy-config.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -22,13 +24,15 @@ export class Agent {
   private sessionAutoApprove: boolean = false;
   private systemMessage: string;
   private configManager: ConfigManager;
+  private proxyOverride?: string;
   private onToolStart?: (name: string, args: Record<string, any>) => void;
   private onToolEnd?: (name: string, result: any) => void;
   private onToolApproval?: (toolName: string, toolArgs: Record<string, any>) => Promise<{ approved: boolean; autoApproveSession?: boolean }>;
   private onThinkingText?: (content: string, reasoning?: string) => void;
   private onFinalMessage?: (content: string, reasoning?: string) => void;
   private onMaxIterations?: (maxIterations: number) => Promise<boolean>;
-  private onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => void;
+  private onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void;
+  private onError?: (error: string) => Promise<boolean>;
   private requestCount: number = 0;
   private currentAbortController: AbortController | null = null;
   private isInterrupted: boolean = false;
@@ -37,11 +41,13 @@ export class Agent {
     model: string,
     temperature: number,
     systemMessage: string | null,
-    debug?: boolean
+    debug?: boolean,
+    proxyOverride?: string
   ) {
     this.model = model;
     this.temperature = temperature;
     this.configManager = new ConfigManager();
+    this.proxyOverride = proxyOverride;
     
     // Set debug mode
     debugEnabled = debug || false;
@@ -82,7 +88,8 @@ export class Agent {
     model: string,
     temperature: number,
     systemMessage: string | null,
-    debug?: boolean
+    debug?: boolean,
+    proxyOverride?: string
   ): Promise<Agent> {
     // Check for default model in config if model not explicitly provided
     const configManager = new ConfigManager();
@@ -93,7 +100,8 @@ export class Agent {
       selectedModel,
       temperature,
       systemMessage,
-      debug
+      debug,
+      proxyOverride
     );
     return agent;
   }
@@ -159,7 +167,8 @@ When asked about your identity, you should identify yourself as a coding assista
     onThinkingText?: (content: string) => void;
     onFinalMessage?: (content: string) => void;
     onMaxIterations?: (maxIterations: number) => Promise<boolean>;
-    onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => void;
+    onApiUsage?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void;
+    onError?: (error: string) => Promise<boolean>;
   }) {
     this.onToolStart = callbacks.onToolStart;
     this.onToolEnd = callbacks.onToolEnd;
@@ -168,14 +177,30 @@ When asked about your identity, you should identify yourself as a coding assista
     this.onFinalMessage = callbacks.onFinalMessage;
     this.onMaxIterations = callbacks.onMaxIterations;
     this.onApiUsage = callbacks.onApiUsage;
+    this.onError = callbacks.onError;
   }
 
   public setApiKey(apiKey: string): void {
     debugLog('Setting API key in agent...');
     debugLog('API key provided:', apiKey ? `${apiKey.substring(0, 8)}...` : 'empty');
     this.apiKey = apiKey;
-    this.client = new Groq({ apiKey });
-    debugLog('Groq client initialized with provided API key');
+    
+    // Get proxy configuration (with override if provided)
+    const proxyAgent = getProxyAgent(this.proxyOverride);
+    const proxyInfo = getProxyInfo(this.proxyOverride);
+    
+    if (proxyInfo.enabled) {
+      debugLog(`Using ${proxyInfo.type} proxy: ${proxyInfo.url}`);
+    }
+    
+    // Initialize Groq client with proxy if available
+    const clientOptions: ClientOptions = { apiKey };
+    if (proxyAgent) {
+      clientOptions.httpAgent = proxyAgent;
+    }
+    
+    this.client = new Groq(clientOptions);
+    debugLog('Groq client initialized with provided API key' + (proxyInfo.enabled ? ' and proxy' : ''));
   }
 
   public saveApiKey(apiKey: string): void {
@@ -332,7 +357,8 @@ When asked about your identity, you should identify yourself as a coding assista
             this.onApiUsage({
               prompt_tokens: response.usage.prompt_tokens,
               completion_tokens: response.usage.completion_tokens,
-              total_tokens: response.usage.total_tokens
+              total_tokens: response.usage.total_tokens,
+              total_time: response.usage.total_time
             });
           }
           debugLog('Message content length:', message.content?.length || 0);
@@ -466,15 +492,33 @@ When asked about your identity, you should identify yourself as a coding assista
             throw new Error(`${errorMessage}. Please check your API key and use /login to set a valid key.`);
           }
           
-          // Add error context to conversation for model to see and potentially recover
-          this.messages.push({
-            role: 'system',
-            content: `Previous API request failed with error: ${errorMessage}. Please try a different approach or ask the user for clarification.`
-          });
-          
-          // Continue conversation loop to let model attempt recovery
-          iteration++;
-          continue;
+          // Ask user if they want to retry via callback
+          if (this.onError) {
+            const shouldRetry = await this.onError(errorMessage);
+            if (shouldRetry) {
+              // User wants to retry - continue the loop without adding error to conversation
+              iteration++;
+              continue;
+            } else {
+              // User chose not to retry - add error message and return
+              this.messages.push({
+                role: 'system',
+                content: `Request failed with error: ${errorMessage}. User chose not to retry.`
+              });
+              return;
+            }
+          } else {
+            // No error callback available - use old behavior
+            // Add error context to conversation for model to see and potentially recover
+            this.messages.push({
+              role: 'system',
+              content: `Previous API request failed with error: ${errorMessage}. Please try a different approach or ask the user for clarification.`
+            });
+            
+            // Continue conversation loop to let model attempt recovery
+            iteration++;
+            continue;
+          }
         }
       }
 

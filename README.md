@@ -57,9 +57,15 @@ npm link        # Enables the `groq` command in any directory
 npm run dev  
 ```
 
-### To Try it Out
+### Run Instantly
 ```bash
+# Using npx, no installation required
 npx groq-code-cli@latest
+```
+
+### Install Globally
+```bash
+npm install -g groq-code-cli@latest
 ```
 
 ## Usage
@@ -77,6 +83,7 @@ Options:
   -t, --temperature <temp>      Temperature for generation (default: 1)
   -s, --system <message>        Custom system message
   -d, --debug                   Enable debug logging to debug-agent.log in current directory
+  -p, --proxy <url>             Proxy URL (e.g. http://proxy:8080 or socks5://proxy:1080)
   -h, --help                    Display help
   -V, --version                 Display version number
 ```
@@ -101,12 +108,29 @@ You can also set your API key for your current directory via environment variabl
 export GROQ_API_KEY=your_api_key_here
 ```
 
+### Proxy Configuration
+
+Supports HTTP/HTTPS/SOCKS5 proxies via CLI flag or environment variables:
+
+```bash
+# CLI flag (highest priority)
+groq --proxy http://proxy:8080
+groq --proxy socks5://proxy:1080
+
+# Environment variables
+export HTTP_PROXY=http://proxy:8080
+export HTTPS_PROXY=socks5://proxy:1080
+```
+
+Priority: `--proxy` > `HTTPS_PROXY` > `HTTP_PROXY`
+
 ### Available Commands
 - `/help` - Show help and available commands
 - `/login` - Login with your credentials
 - `/model` - Select your Groq model
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
+- `/stats` - Display session statistics and token usage
 
 
 ## Development
