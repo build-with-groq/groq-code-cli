@@ -5,6 +5,8 @@ export interface CommandContext {
   setShowModelSelector?: (show: boolean) => void;
   toggleReasoning?: () => void;
   showReasoning?: boolean;
+  /** The agent (if provided) for agent-aware commands like /permissions, /compact, /mcp. */
+  agent?: import('../core/agent.js').Agent;
   sessionStats?: {
     promptTokens: number;
     completionTokens: number;

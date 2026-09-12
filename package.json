@@ -52,6 +52,7 @@
 		],
 		"files": [
 			"src/**/*.test.ts",
+			"test/**/*.test.ts",
 			"!**/*.d.ts"
 		]
 	},

@@ -10,9 +10,9 @@ import TokenMetrics from '../display/TokenMetrics.js';
 import PendingToolApproval from '../input-overlays/PendingToolApproval.js';
 import Login from '../input-overlays/Login.js';
 import ModelSelector from '../input-overlays/ModelSelector.js';
-import MaxIterationsContinue from '../input-overlays/MaxIterationsContinue.js';
 import ErrorRetry from '../input-overlays/ErrorRetry.js';
 import { handleSlashCommand } from '../../../commands/index.js';
+import type { PermissionDecision } from '../../../types.js';
 
 interface ChatProps {
   agent: Agent;
@@ -61,14 +61,12 @@ export default function Chat({ agent }: ChatProps) {
     isProcessing,
     currentToolExecution,
     pendingApproval,
-    pendingMaxIterations,
     pendingError,
     sessionAutoApprove,
     showReasoning,
     sendMessage,
-    approveToolExecution,
-    respondToMaxIterations,
-    respondToError,
+    respondApproval,
+    respondError,
     addMessage,
     setApiKey,
     clearHistory,
@@ -98,7 +96,7 @@ export default function Chat({ agent }: ChatProps) {
       }
       // If waiting for tool approval, reject the tool
       else if (pendingApproval) {
-        handleApproval(false);
+        handleApproval({ status: 'deny', reason: 'cancelled' });
       }
       // If model is actively processing (but not waiting for approval or executing tools after approval)
       else if (isProcessing && !currentToolExecution) {
@@ -109,7 +107,7 @@ export default function Chat({ agent }: ChatProps) {
         setInputValue('');
       }
     }
-    
+
     // Handle error retry keys
     if (pendingError) {
       if (input.toLowerCase() === 'r') {
@@ -129,7 +127,7 @@ export default function Chat({ agent }: ChatProps) {
   const handleSendMessage = async (message: string) => {
     if (message.trim() && !isProcessing) {
       setInputValue('');
-      
+
       // Handle slash commands
       if (message.startsWith('/')) {
         handleSlashCommand(message, {
@@ -143,25 +141,26 @@ export default function Chat({ agent }: ChatProps) {
           toggleReasoning,
           showReasoning,
           sessionStats,
+          agent,
         });
         return;
       }
-      
+
       // The agent will handle starting request tracking
       await sendMessage(message);
     }
   };
 
-  const handleApproval = (approved: boolean, autoApproveSession?: boolean) => {
-    approveToolExecution(approved, autoApproveSession);
+  const handleApproval = (decision: PermissionDecision) => {
+    respondApproval(decision);
   };
 
   const handleErrorRetry = () => {
-    respondToError(true);
+    respondError(true);
   };
 
   const handleErrorCancel = () => {
-    respondToError(false);
+    respondError(false);
   };
 
   const handleLogin = (apiKey: string) => {
@@ -238,16 +237,16 @@ export default function Chat({ agent }: ChatProps) {
         {pendingApproval ? (
           <PendingToolApproval
             toolName={pendingApproval.toolName}
-            toolArgs={pendingApproval.toolArgs}
-            onApprove={() => handleApproval(true, false)}
-            onReject={() => handleApproval(false, false)}
-            onApproveWithAutoSession={() => handleApproval(true, true)}
-          />
-        ) : pendingMaxIterations ? (
-          <MaxIterationsContinue
-            maxIterations={pendingMaxIterations.maxIterations}
-            onContinue={() => respondToMaxIterations(true)}
-            onStop={() => respondToMaxIterations(false)}
+            toolArgs={pendingApproval.args}
+            onApprove={() => handleApproval({ status: 'allow' })}
+            onReject={() => handleApproval({ status: 'deny', reason: 'cancelled' })}
+            onApproveWithAutoSession={() => handleApproval({ status: 'allow', autoApproveSession: true })}
+            onApproveWithAlwaysPath={() =>
+              handleApproval({
+                status: 'allow',
+                alwaysAllowPath: pendingApproval.args.file_path || pendingApproval.args.path,
+              })
+            }
           />
         ) : pendingError ? (
           <ErrorRetry
@@ -264,7 +263,7 @@ export default function Chat({ agent }: ChatProps) {
           <ModelSelector
             onSubmit={handleModelSelect}
             onCancel={handleModelCancel}
-            currentModel={agent.getCurrentModel?.() || undefined}
+            currentModel={agent.modelName}
           />
         ) : showInput ? (
           <MessageInput
@@ -289,7 +288,7 @@ export default function Chat({ agent }: ChatProps) {
         </Box>
         <Box>
           <Text color="gray" dimColor>
-            {agent.getCurrentModel?.() || ''}
+            {agent.modelName}
           </Text>
         </Box>
       </Box>

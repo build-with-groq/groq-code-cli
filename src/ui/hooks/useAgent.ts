@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
 import { Agent } from '../../core/agent.js';
-import { DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../../tools/tool-schemas.js';
+import type { PermissionDecision } from '../../types.js';
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system' | 'tool' | 'tool_execution';
+  role: 'user' | 'assistant' | 'system' | 'tool_execution';
   content: string;
   reasoning?: string;
   timestamp: Date;
@@ -32,12 +32,12 @@ export interface ToolExecution {
 }
 
 export function useAgent(
-  agent: Agent, 
+  agent: Agent,
   onStartRequest?: () => void,
-  onAddApiTokens?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void, 
+  onAddApiTokens?: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => void,
   onPauseRequest?: () => void,
   onResumeRequest?: () => void,
-  onCompleteRequest?: () => void
+  onCompleteRequest?: () => void,
 ) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userMessageHistory, setUserMessageHistory] = useState<string[]>([]);
@@ -45,20 +45,17 @@ export function useAgent(
   const [currentToolExecution, setCurrentToolExecution] = useState<ToolExecution | null>(null);
   const [sessionAutoApprove, setSessionAutoApprove] = useState(false);
   const [showReasoning, setShowReasoning] = useState(true);
-  const currentExecutionIdRef = useRef<string | null>(null);
   const [pendingApproval, setPendingApproval] = useState<{
     toolName: string;
-    toolArgs: Record<string, any>;
-    resolve: (approvalResult: { approved: boolean; autoApproveSession?: boolean }) => void;
-  } | null>(null);
-  const [pendingMaxIterations, setPendingMaxIterations] = useState<{
-    maxIterations: number;
-    resolve: (shouldContinue: boolean) => void;
+    args: Record<string, any>;
+    resolve: (d: PermissionDecision) => void;
   } | null>(null);
   const [pendingError, setPendingError] = useState<{
     error: string;
-    resolve: (shouldRetry: boolean) => void;
+    resolve: (retry: boolean) => void;
   } | null>(null);
+  const streamingRef = useRef<{ id: string; content: string; reasoning?: string } | null>(null);
+  const currentExecutionIdRef = useRef<string | null>(null);
 
   const addMessage = useCallback((message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     const newMessage: ChatMessage = {
@@ -66,287 +63,165 @@ export function useAgent(
       id: Math.random().toString(36).substr(2, 9),
       timestamp: new Date(),
     };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
     return newMessage.id;
   }, []);
 
   const updateMessage = useCallback((id: string, updates: Partial<ChatMessage>) => {
-    setMessages(prev => prev.map(msg => 
-      msg.id === id ? { ...msg, ...updates } : msg
-    ));
+    setMessages((prev) => prev.map((msg) => (msg.id === id ? { ...msg, ...updates } : msg)));
   }, []);
 
-  const sendMessage = useCallback(async (userInput: string) => {
-    if (isProcessing) return;
+  const sendMessage = useCallback(
+    async (userInput: string) => {
+      if (isProcessing) return;
+      if (onStartRequest) onStartRequest();
+      setUserMessageHistory((prev) => [...prev, userInput]);
+      addMessage({ role: 'user', content: userInput });
+      setIsProcessing(true);
+      try {
+        // Reset streaming ref.
+        if (streamingRef.current) streamingRef.current = null;
 
-    // Start tracking metrics for new agent request
-    if (onStartRequest) {
-      onStartRequest();
-    }
-
-    // Add user message to history
-    setUserMessageHistory(prev => [...prev, userInput]);
-
-    // Add user message
-    addMessage({
-      role: 'user',
-      content: userInput,
-    });
-
-    setIsProcessing(true);
-
-    try {
-      // Set up tool execution callbacks
-      agent.setToolCallbacks({
-        onThinkingText: (content: string, reasoning?: string) => {
-          // Add thinking text as assistant message when model uses tools
-          addMessage({
-            role: 'assistant',
-            content: content,
-            reasoning: reasoning,
-          });
-        },
-        onFinalMessage: (content: string, reasoning?: string) => {
-          // Add final assistant message when no tools are used
-          addMessage({
-            role: 'assistant',
-            content: content,
-            reasoning: reasoning,
-          });
-        },
-        onToolStart: (name: string, args: Record<string, any>) => {
-          const toolExecution: ToolExecution = {
-            id: Math.random().toString(36).substr(2, 9),
-            name,
-            args,
-            status: 'pending',
-            needsApproval: DANGEROUS_TOOLS.includes(name) || APPROVAL_REQUIRED_TOOLS.includes(name),
-          };
-          
-          // Store the ID in ref for reliable matching across callbacks
-          currentExecutionIdRef.current = toolExecution.id;
-          
-          // Always add tool execution message; approval is handled separately
-          addMessage({
-            role: 'tool_execution',
-            content: `Executing ${name}...`,
-            toolExecution,
-          });
-          
-          setCurrentToolExecution(toolExecution);
-        },
-        onToolEnd: (name: string, result: any) => {
-          const executionId = currentExecutionIdRef.current;
-          
-          // Only update the specific tool execution that just finished
-          setMessages(prev => {
-            return prev.map(msg => {
-              // Match by the execution ID stored in ref (reliable across callbacks)
-              if (msg.toolExecution?.id === executionId && msg.role === 'tool_execution') {
-                return { 
-                ...msg, 
-                content: result.userRejected 
-                  ? `🚫 ${name} rejected by user`
-                  : result.success 
-                    ? `✓ ${name} completed successfully` 
-                    : `🔴 ${name} failed: ${result.error || 'Unknown error'}`,
-                toolExecution: { 
-                  ...msg.toolExecution!, 
-                  status: result.userRejected 
-                    ? 'canceled'
-                    : result.success 
-                      ? 'completed' 
-                      : 'failed',
-                  result 
-                }
-              };
+        agent.setCallbacks({
+          onStreamDelta: (delta) => {
+            if (!streamingRef.current) {
+              const id = addMessage({ role: 'assistant', content: '' });
+              streamingRef.current = { id, content: '' };
             }
-            return msg;
-          });
+            streamingRef.current.content += delta;
+            updateMessage(streamingRef.current.id, {
+              content: streamingRef.current.content,
+            });
+          },
+          onMessageEnd: (content, reasoning) => {
+            if (streamingRef.current) {
+              updateMessage(streamingRef.current.id, { content, reasoning });
+              streamingRef.current = null;
+            } else if (content) {
+              addMessage({ role: 'assistant', content, reasoning });
+            }
+          },
+          onToolStart: (name, args) => {
+            const toolExecution: ToolExecution = {
+              id: Math.random().toString(36).substr(2, 9),
+              name,
+              args,
+              status: 'executing',
+            };
+            currentExecutionIdRef.current = toolExecution.id;
+            addMessage({
+              role: 'tool_execution',
+              content: `Executing ${name}...`,
+              toolExecution,
+            });
+            setCurrentToolExecution(toolExecution);
+          },
+          onToolEnd: (name, result) => {
+            const execId = currentExecutionIdRef.current;
+            setMessages((prev) =>
+              prev.map((msg) => {
+                if (msg.toolExecution?.id === execId) {
+                  return {
+                    ...msg,
+                    content: result?.userRejected
+                      ? `🚫 ${name} rejected by user`
+                      : result?.success
+                        ? `✓ ${name} completed`
+                        : `🔴 ${name} failed: ${result?.error || 'Unknown error'}`,
+                    toolExecution: {
+                      ...msg.toolExecution!,
+                      status: result?.userRejected
+                        ? 'canceled'
+                        : result?.success
+                          ? 'completed'
+                          : 'failed',
+                      result,
+                    },
+                  };
+                }
+                return msg;
+              }),
+            );
+            setCurrentToolExecution(null);
+            currentExecutionIdRef.current = null;
+          },
+          onApiUsage: (usage) => {
+            if (onAddApiTokens) onAddApiTokens(usage);
+          },
+          onPermissionPrompt: (req) => {
+            if (onPauseRequest) onPauseRequest();
+            return new Promise<PermissionDecision>((resolve) => {
+              setPendingApproval({ toolName: req.toolName, args: req.args, resolve });
+            });
+          },
+          onError: (error) => {
+            if (onPauseRequest) onPauseRequest();
+            return new Promise<boolean>((resolve) => {
+              setPendingError({ error, resolve });
+            });
+          },
+          onSummaryRequested: async () => {
+            return agent.summarize();
+          },
         });
-          setCurrentToolExecution(null);
-          currentExecutionIdRef.current = null;
-        },
-        onApiUsage: (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; total_time?: number }) => {
-          // Pass API usage data to token metrics
-          if (onAddApiTokens) {
-            onAddApiTokens(usage);
-          }
-        },
-        onToolApproval: async (toolName: string, toolArgs: Record<string, any>) => {          
-          // Pause metrics while waiting for approval
-          if (onPauseRequest) {
-            onPauseRequest();
-          }
-          
-          return new Promise<{ approved: boolean; autoApproveSession?: boolean }>((resolve) => {
-            setPendingApproval({ 
-              toolName, 
-              toolArgs, 
-              resolve: (approvalResult: { approved: boolean; autoApproveSession?: boolean }) => {
-                
-                // Resume metrics after approval decision
-                if (onResumeRequest) {
-                  onResumeRequest();
-                }
-                
-                // Update the existing tool execution message with approval result
-                setMessages(prev => {
-                  return prev.map(msg => {
-                    if (msg.toolExecution?.id === currentExecutionIdRef.current && msg.role === 'tool_execution') {
-                      const messageContent = approvalResult.approved 
-                        ? `Executing ${toolName}...${approvalResult.autoApproveSession ? ' (Auto-approval enabled for session)' : ''}` 
-                        : `Tool ${toolName} rejected by user`;
-                      
-                      return { 
-                        ...msg, 
-                        content: messageContent,
-                        toolExecution: { 
-                          ...msg.toolExecution!, 
-                          status: approvalResult.approved ? 'approved' : 'canceled'
-                        }
-                      };
-                    }
-                    return msg;
-                  });
-                });
-                
-                if (approvalResult.autoApproveSession) {
-                  setSessionAutoApprove(true);
-                }
-                resolve(approvalResult);
-              }
-            });
-          });
-        },
-        onMaxIterations: async (maxIterations: number) => {          
-          // Pause metrics while waiting for continuation decision
-          if (onPauseRequest) {
-            onPauseRequest();
-          }
-          
-          return new Promise<boolean>((resolve) => {
-            setPendingMaxIterations({ 
-              maxIterations, 
-              resolve: (shouldContinue: boolean) => {
-                
-                // Resume metrics after decision
-                if (onResumeRequest) {
-                  onResumeRequest();
-                }
-                
-                resolve(shouldContinue);
-              }
-            });
-          });
-        },
-        onError: async (error: string) => {
-          // Pause metrics while waiting for retry decision
-          if (onPauseRequest) {
-            onPauseRequest();
-          }
-          
-          return new Promise<boolean>((resolve) => {
-            setPendingError({
-              error,
-              resolve: (shouldRetry: boolean) => {
-                
-                // Resume metrics after decision
-                if (onResumeRequest) {
-                  onResumeRequest();
-                }
-                
-                resolve(shouldRetry);
-              }
-            });
-          });
-        },
-      });
 
-      await agent.chat(userInput);
-
-    } catch (error) {
-      // Don't show abort errors - user interruption message is already shown
-      if (error instanceof Error && (
-        error.message.includes('Request was aborted') ||
-        error.message.includes('The operation was aborted') ||
-        error.name === 'AbortError'
-      )) {
-        // Skip showing abort errors since user already sees "User has interrupted the request"
-        return;
+        await agent.chat(userInput);
+      } catch (e: any) {
+        const message =
+          e instanceof Error
+            ? e.name === 'AbortError' || e.message.includes('aborted')
+              ? 'Request interrupted.'
+              : e.message
+            : String(e);
+        addMessage({ role: 'system', content: message });
+      } finally {
+        setIsProcessing(false);
+        setCurrentToolExecution(null);
+        if (streamingRef.current) streamingRef.current = null;
+        if (onCompleteRequest) onCompleteRequest();
       }
-      
-      let errorMessage = 'Unknown error occurred';
-      
-      if (error instanceof Error) {
-        // Check if it's an API error with more details
-        if ('status' in error && 'error' in error) {
-          const apiError = error as any;
-          if (apiError.error?.error?.message) {
-            errorMessage = `API Error (${apiError.status}): ${apiError.error.error.message}`;
-            if (apiError.error.error.code) {
-              errorMessage += ` (Code: ${apiError.error.error.code})`;
-            }
-          } else {
-            errorMessage = `API Error (${apiError.status}): ${error.message}`;
-          }
-        } else {
-          errorMessage = `Error: ${error.message}`;
+    },
+    [agent, isProcessing, addMessage, updateMessage, onStartRequest, onAddApiTokens, onPauseRequest, onResumeRequest, onCompleteRequest],
+  );
+
+  const respondApproval = useCallback(
+    (decision: PermissionDecision) => {
+      if (pendingApproval) {
+        if (onResumeRequest) onResumeRequest();
+        pendingApproval.resolve(decision);
+        if (decision.status === 'allow' && decision.alwaysAllowPath) {
+          agent.approvePath(decision.alwaysAllowPath);
         }
-      } else {
-        errorMessage = `Error: ${String(error)}`;
+        setPendingApproval(null);
       }
-      
-      addMessage({
-        role: 'system',
-        content: errorMessage,
-      });
-    } finally {
-      setIsProcessing(false);
-      setCurrentToolExecution(null);
-      
-      // Complete the request tracking
-      if (onCompleteRequest) {
-        onCompleteRequest();
+    },
+    [pendingApproval, agent, onResumeRequest],
+  );
+
+  const respondError = useCallback(
+    (retry: boolean) => {
+      if (pendingError) {
+        if (onResumeRequest) onResumeRequest();
+        pendingError.resolve(retry);
+        setPendingError(null);
       }
-    }
-  }, [agent, isProcessing, addMessage, updateMessage, onStartRequest, onAddApiTokens, onPauseRequest, onResumeRequest, onCompleteRequest]);
+    },
+    [pendingError, onResumeRequest],
+  );
 
-  const approveToolExecution = useCallback((approved: boolean, autoApproveSession?: boolean) => {
-    if (pendingApproval) {
-      pendingApproval.resolve({ approved, autoApproveSession });
-      setPendingApproval(null);
-    }
-  }, [pendingApproval]);
-
-  const respondToMaxIterations = useCallback((shouldContinue: boolean) => {
-    if (pendingMaxIterations) {
-      pendingMaxIterations.resolve(shouldContinue);
-      setPendingMaxIterations(null);
-    }
-  }, [pendingMaxIterations]);
-
-  const respondToError = useCallback((shouldRetry: boolean) => {
-    if (pendingError) {
-      pendingError.resolve(shouldRetry);
-      setPendingError(null);
-    }
-  }, [pendingError]);
-
-  const setApiKey = useCallback((apiKey: string) => {
-    agent.setApiKey(apiKey);
-  }, [agent]);
+  const setApiKey = useCallback((k: string) => agent.setApiKey(k), [agent]);
 
   const toggleAutoApprove = useCallback(() => {
-    const newAutoApproveState = !sessionAutoApprove;
-    setSessionAutoApprove(newAutoApproveState);
-    agent.setSessionAutoApprove(newAutoApproveState);
-  }, [sessionAutoApprove, agent]);
+    setSessionAutoApprove((prev) => {
+      const next = !prev;
+      agent.setSessionAutoApprove(next);
+      return next;
+    });
+  }, [agent]);
 
   const clearHistory = useCallback(() => {
     setMessages([]);
     setUserMessageHistory([]);
-    // Don't reset sessionAutoApprove, it should persist across /clear
     agent.clearHistory();
   }, [agent]);
 
@@ -354,17 +229,10 @@ export function useAgent(
     agent.interrupt();
     setIsProcessing(false);
     setCurrentToolExecution(null);
-    
-    // Add the interruption message to the UI
-    addMessage({
-      role: 'system',
-      content: 'User has interrupted the request.',
-    });
+    addMessage({ role: 'system', content: 'User has interrupted the request.' });
   }, [agent, addMessage]);
 
-  const toggleReasoning = useCallback(() => {
-    setShowReasoning(prev => !prev);
-  }, []);
+  const toggleReasoning = useCallback(() => setShowReasoning((p) => !p), []);
 
   return {
     messages,
@@ -372,14 +240,12 @@ export function useAgent(
     isProcessing,
     currentToolExecution,
     pendingApproval,
-    pendingMaxIterations,
     pendingError,
     sessionAutoApprove,
     showReasoning,
     sendMessage,
-    approveToolExecution,
-    respondToMaxIterations,
-    respondToError,
+    respondApproval,
+    respondError,
     addMessage,
     setApiKey,
     clearHistory,

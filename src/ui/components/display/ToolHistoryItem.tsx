@@ -1,7 +1,17 @@
 import { Box, Text } from 'ink';
 import { ToolExecution } from '../../hooks/useAgent.js';
 import DiffPreview from './DiffPreview.js';
-import { formatToolParams } from '../../../tools/tools.js';
+
+/** Format the key args of a tool call for display. */
+function formatArgs(args: Record<string, any>): string {
+  const parts = Object.entries(args)
+    .filter(([, v]) => v !== undefined && v !== null)
+    .map(([k, v]) => {
+      const s = typeof v === 'string' ? v : JSON.stringify(v);
+      return `${k}: ${s.length > 80 ? s.slice(0, 77) + '...' : s}`;
+    });
+  return parts.join(' · ');
+}
 
 interface ToolHistoryItemProps {
   execution: ToolExecution;
@@ -127,11 +137,9 @@ export default function ToolHistoryItem({ execution }: ToolHistoryItemProps) {
             );
           })}
         </Box>
-      ) : formatToolParams(name, args, { includePrefix: false, separator: ': ' }) ? (
+      ) : formatArgs(args) ? (
         <Box>
-          <Text color="gray">
-            {formatToolParams(name, args, { includePrefix: false, separator: ': ' })}
-          </Text>
+          <Text color="gray">{formatArgs(args)}</Text>
         </Box>
       ) : null}
 
