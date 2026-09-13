@@ -278,6 +278,32 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
 
       // Tool calls?
       if (turn.toolCalls && turn.toolCalls.length > 0) {
+        // Client-side JSON hardening: if the model emitted a tool call whose
+        // arguments are not valid JSON, do NOT send it to the server (which
+        // would 400 "Failed to parse tool call arguments as JSON"). Instead,
+        // tell the model its arguments were malformed and have it re-issue a
+        // clean call. This avoids a hard error mid-request.
+        if (turn.malformedToolCall) {
+          const bad = turn.malformedToolCall;
+          this.messages.push({
+            role: 'system',
+            content: `Your tool call to "${bad.name}" had invalid JSON arguments and was rejected before reaching the tool. Raw arguments received: ${bad.raw.slice(0, 200)}. Re-issue the SAME tool call with clean, valid JSON — escape all double-quotes inside string values and remove stray newlines. Do not repeat the invalid call.`,
+          });
+          iteration++;
+          if (iteration >= 2) {
+            // Two consecutive malformed calls: give up and tell the user.
+            this.messages.push({
+              role: 'system',
+              content: 'Repeatedly malformed tool calls: the model could not emit valid tool arguments. Returning control to the user. Ask them to simplify the request.',
+            });
+            if (this.cb.onMessageEnd) {
+              this.cb.onMessageEnd('The model kept producing invalid tool calls. Please simplify the request or try again.');
+            }
+            return;
+          }
+          continue; // re-issue a fresh model turn
+        }
+
         // Record the assistant's intent BEFORE running any tools so the model
         // (and any non-OpenAI-compatible endpoint) sees the full tool-call turn.
         const assistantToolMsg: AgentMessage = {
@@ -350,6 +376,7 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
     content: string;
     reasoning?: string;
     toolCalls?: { id: string; name: string; arguments: string }[];
+    malformedToolCall?: { name: string; raw: string };
   }> {
     const client = await this.ensureClient();
     const controller = new AbortController();
@@ -433,7 +460,12 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
       throw e;
     }
 
-    const final: { content: string; reasoning?: string; toolCalls?: { id: string; name: string; arguments: string }[] } = {
+    const final: {
+      content: string;
+      reasoning?: string;
+      toolCalls?: { id: string; name: string; arguments: string }[];
+      malformedToolCall?: { name: string; raw: string };
+    } = {
       content,
       reasoning: reasoning || undefined,
     };
@@ -445,6 +477,23 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
         name: normalizeToolName(c.name || ''),
         arguments: c.args || '{}',
       }));
+    }
+    // Detect malformed tool-call args clientside, BEFORE the server 400s.
+    // If any tool call's arguments do not parse as JSON, tell the caller so it
+    // can re-issue a clean turn instead of triggering "Failed to parse tool call
+    // arguments as JSON".
+    if (final.toolCalls) {
+      const bad = final.toolCalls.find((tc) => {
+        try {
+          JSON.parse(tc.arguments);
+          return false;
+        } catch {
+          return true;
+        }
+      });
+      if (bad) {
+        final.malformedToolCall = { name: bad.name, raw: bad.arguments };
+      }
     }
     return final;
   }

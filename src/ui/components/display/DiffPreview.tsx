@@ -196,17 +196,36 @@ export default function DiffPreview({ toolName, toolArgs, isHistorical = false }
     );
   }
 
+  // Cap the displayed diff so a very large new file (e.g. a long write_file)
+  // doesn't flood the approval box. Show the first chunk fully, then summarize.
+  const MAX_DIFF_LINES = 60;
+  let totalLines = 0;
+  let shownChunks = 0;
+  let clipped = false;
+
   return (
     <Box flexDirection="column">
       <Text bold color="cyan">Diff Preview:</Text>
-      {diffChunks.map((chunk, chunkIndex) => (
-        <Box key={chunkIndex} flexDirection="column" marginTop={chunkIndex > 0 ? 1 : 0}>
-          {chunkIndex > 0 && (
-            <Text dimColor>...</Text>
-          )}
-          {chunk.lines.map((line, lineIndex) => renderDiffLine(line, lineIndex))}
-        </Box>
-      ))}
+      {diffChunks.map((chunk, chunkIndex) => {
+        if (shownChunks >= 3 || totalLines >= MAX_DIFF_LINES) {
+          clipped = true;
+          return null;
+        }
+        const budget = MAX_DIFF_LINES - totalLines;
+        const linesToShow = chunk.lines.slice(0, budget);
+        totalLines += linesToShow.length;
+        if (linesToShow.length < chunk.lines.length) clipped = true;
+        shownChunks++;
+        return (
+          <Box key={chunkIndex} flexDirection="column" marginTop={chunkIndex > 0 ? 1 : 0}>
+            {linesToShow.map((line, lineIndex) => renderDiffLine(line, lineIndex))}
+            {linesToShow.length < chunk.lines.length && (
+              <Text dimColor>… ({chunk.lines.length - linesToShow.length} more lines in this hunk)</Text>
+            )}
+          </Box>
+        );
+      })}
+      {clipped && <Text dimColor>… (diff truncated — {diffChunks.length} hunks total)</Text>}
     </Box>
   );
 }
