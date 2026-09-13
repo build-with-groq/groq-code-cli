@@ -246,6 +246,50 @@ async function showTree(): Promise<ToolResult> {
   return success(lines.join('\n'), 'Repository overview');
 }
 
+// ---- Task list tools (for the live /todo checklist) ----
+
+interface TaskItem {
+  id: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed';
+}
+
+let currentTasks: { userQuery: string; tasks: TaskItem[] } | null = null;
+
+/** Get the current task list snapshot (for the UI todo panel). */
+export function getCurrentTasks(): { userQuery: string; tasks: TaskItem[] } | null {
+  return currentTasks ? { userQuery: currentTasks.userQuery, tasks: currentTasks.tasks.map((t) => ({ ...t })) } : null;
+}
+
+async function createTasks(args: Record<string, any>): Promise<ToolResult> {
+  const userQuery = String(args.user_query || '');
+  const raw = Array.isArray(args.tasks) ? args.tasks : [];
+  const tasks: TaskItem[] = raw
+    .filter((t: any) => t && typeof t.id === 'string' && typeof t.description === 'string')
+    .map((t: any) => ({ id: t.id, description: t.description, status: t.status || 'pending' }));
+  if (tasks.length === 0) return fail('create_tasks requires a non-empty tasks array with id+description');
+  currentTasks = { userQuery, tasks };
+  return success(
+    { task_count: tasks.length, tasks },
+    `Created ${tasks.length} task(s) for: ${userQuery}`,
+  );
+}
+
+async function updateTasks(args: Record<string, any>): Promise<ToolResult> {
+  if (!currentTasks) return fail('No task list exists; call create_tasks first.');
+  const updates = Array.isArray(args.task_updates) ? args.task_updates : [];
+  let changed = 0;
+  for (const u of updates) {
+    const task = currentTasks.tasks.find((t) => t.id === u.id);
+    if (!task) continue;
+    if (['pending', 'in_progress', 'completed'].includes(u.status)) {
+      task.status = u.status;
+      changed++;
+    }
+  }
+  return success({ task_count: currentTasks.tasks.length, tasks: currentTasks.tasks }, `Updated ${changed} task(s)`);
+}
+
 const tools = {
   read_file: { name: 'read_file', args: { file_path: 'string', start_line: 'integer?', end_line: 'integer?' } },
   write_file: { name: 'write_file', args: { file_path: 'string', content: 'string' } },
@@ -373,6 +417,55 @@ export const TOOLS: ToolDefinition[] = [
     permission: 'read',
     parameters: { type: 'object', properties: {}, required: [] },
     run: showTree,
+  },
+  {
+    name: 'create_tasks',
+    description: 'Break a complex request into a structured task list. Use for multi-step work so the user can track progress. Tasks show as a checklist in the UI.',
+    permission: 'read',
+    parameters: {
+      type: 'object',
+      properties: {
+        user_query: { type: 'string', description: 'The original user request' },
+        tasks: {
+          type: 'array',
+          description: 'List of subtasks',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              description: { type: 'string' },
+              status: { type: 'string', enum: ['pending', 'in_progress', 'completed'] },
+            },
+            required: ['id', 'description'],
+          },
+        },
+      },
+      required: ['user_query', 'tasks'],
+    },
+    run: createTasks,
+  },
+  {
+    name: 'update_tasks',
+    description: 'Mark tasks as in_progress or completed.',
+    permission: 'read',
+    parameters: {
+      type: 'object',
+      properties: {
+        task_updates: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              status: { type: 'string', enum: ['pending', 'in_progress', 'completed'] },
+            },
+            required: ['id', 'status'],
+          },
+        },
+      },
+      required: ['task_updates'],
+    },
+    run: updateTasks,
   },
 ];
 

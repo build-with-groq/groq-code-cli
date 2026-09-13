@@ -7,6 +7,8 @@ export interface CommandContext {
   showReasoning?: boolean;
   /** The agent (if provided) for agent-aware commands like /permissions, /compact, /mcp. */
   agent?: import('../core/agent.js').Agent;
+  /** Raw command text as typed (e.g. "/resume session-....jsonl"). */
+  rawCommand?: string;
   sessionStats?: {
     promptTokens: number;
     completionTokens: number;

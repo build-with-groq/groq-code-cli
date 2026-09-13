@@ -10,6 +10,11 @@ import { permissionsCommand } from './definitions/permissions.js';
 import { mcpCommand } from './definitions/mcp.js';
 import { skillsCommand } from './definitions/skills.js';
 import { compactCommand } from './definitions/compact.js';
+import { memoryCommand } from './definitions/memory.js';
+import { resumeCommand, saveCommand } from './definitions/resume.js';
+import { planCommand } from './definitions/plan.js';
+import { agentsCommand } from './definitions/agents.js';
+import { costCommand, todoCommand } from './definitions/cost.js';
 
 const availableCommands: CommandDefinition[] = [
   helpCommand,
@@ -23,6 +28,13 @@ const availableCommands: CommandDefinition[] = [
   mcpCommand,
   skillsCommand,
   compactCommand,
+  memoryCommand,
+  resumeCommand,
+  saveCommand,
+  planCommand,
+  agentsCommand,
+  costCommand,
+  todoCommand,
 ];
 
 export function getAvailableCommands(): CommandDefinition[] {
@@ -50,6 +62,9 @@ export function handleSlashCommand(command: string, context: CommandContext) {
     role: 'user',
     content: command,
   });
+
+  // Expose the raw typed command to handlers that need args (e.g. /resume <file>).
+  context.rawCommand = command;
 
   const target = commandDef || partialMatch;
   if (target) {

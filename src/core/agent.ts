@@ -9,6 +9,8 @@ import { TOOLS, getTool, normalizeToolName } from '../tools/registry.js';
 import { WEB_TOOLS } from '../tools/web.js';
 import { connectAllMcp, McpClient } from './mcp.js';
 import { skillsIndex } from './skills.js';
+import { loadMemory, writeMemory, getProjectMemory } from './memory.js';
+import { saveSession, loadSession, listSessions, deleteSession } from './sessions.js';
 import { estimateConversationTokens, estimateTokens, isOverBudget, trimConversation, compactMarker, type AgentMessage } from './context.js';
 import type { ToolDefinition, ApiUsage, PermissionDecision } from '../types.js';
 
@@ -39,6 +41,7 @@ export class Agent {
   private permissions: PermissionManager;
   private currentAbortController: AbortController | null = null;
   private isInterrupted = false;
+  private planMode = false;
   private mcpClients: McpClient[] = [];
   private registry: ToolDefinition[];
   private configManager = new ConfigManager();
@@ -110,6 +113,10 @@ export class Agent {
 
   buildDefaultSystemMessage(): string {
     const skills = skillsIndex();
+    const memory = loadMemory();
+    const memorySection = memory
+      ? `\nMEMORY (from earlier sessions - follow these facts/preferences unless the user overrides)\n${memory}\n`
+      : '';
     return `You are a coding assistant running on ${this.model} via Groq, in an interactive terminal. You can act autonomously by using tools.
 
 AVAILABLE TOOLS
@@ -136,7 +143,7 @@ REPETITION GUARD
 
 CONTEXT
 ${skills !== 'No skills installed.' ? 'Installed skills:\n' + skills : 'No skills installed yet. You can create them under .groq/skills/<name>/SKILL.md.'}
-
+${memorySection}
 OUTPUT STYLE
 - Be direct. Use markdown sparingly; avoid tables.
 - For code changes, summarize what changed and why after you finish.
@@ -218,6 +225,15 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
     this.permissions.setSessionAutoApprove(enabled);
   }
 
+  /** Toggle plan mode: only read-only tools run; the model outputs a plan instead of editing. */
+  setPlanMode(enabled: boolean): void {
+    this.planMode = enabled;
+  }
+
+  get planModeEnabled(): boolean {
+    return this.planMode;
+  }
+
   get autoApproveEnabled(): boolean {
     return this.permissions.autoApproveEnabled;
   }
@@ -243,13 +259,205 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
       return this.client!;
     }
     throw new Error('No API key available. Please use /login to set your Groq API key.');
+
+  }
+
+  /** Read the current project memory content. */
+  getMemoryContent(): string {
+    return getProjectMemory();
+  }
+
+  /** Write project memory and refresh the system prompt. */
+  setMemoryContent(content: string): void {
+    writeMemory(content);
+    this.setSystemFromModel(); // rebuild system message to include new memory
+  }
+
+  /** Save the current conversation to a resume file. */
+  persistSession(): string {
+    const file = saveSession(this.messages);
+    return file;
+  }
+
+  /** List saved sessions (for /resume). */
+  listSessions(): ReturnType<typeof listSessions> {
+    return listSessions();
+  }
+
+  /** Load a saved session's messages into the conversation, keeping system prompts. */
+  loadSessionFile(file: string): AgentMessage[] | null {
+    const loaded = loadSession(file);
+    if (!loaded) return null;
+    const systems = this.messages.filter((m) => m.role === 'system');
+    // Keep system messages + restore the session's user/assistant/tool history.
+    this.messages = [...systems, ...loaded.filter((m) => m.role !== 'system')];
+    return loaded;
+  }
+
+  /** Delete a saved session. */
+  removeSession(file: string): boolean {
+    return deleteSession(file);
+  }
+
+  /**
+   * Spawn a background "research" sub-agent. It runs its OWN read-only
+   * exploration (separate message buffer, read-only tools only) and returns a
+   * compact findings summary without polluting the main conversation's UI.
+   *
+   * @param task      What to research (e.g. "how does the auth flow work?")
+   * @param maxTools  Max tool iterations before wrapping up (default 8)
+   * @returns The sub-agent's final findings text.
+   */
+  async research(task: string, maxTools = 8): Promise<string> {
+    // Build a lightweight sub-conversation: system prompt + the research task.
+    const subMessages: AgentMessage[] = [
+      { role: 'system', content: this.buildResearchSystemPrompt() },
+      { role: 'user', content: task },
+    ];
+    const subCalls = new Map<string, number>();
+    let loops = 0;
+
+    // We drive it manually: run streamTurn() (read-only), never execute writes.
+    while (loops < maxTools) {
+      const turn = await this.streamTurnWith(subMessages);
+      loops++;
+      if (!turn.content && !turn.toolCalls) break;
+
+      if (turn.toolCalls && turn.toolCalls.length > 0) {
+        // Append assistant tool call + blocker for each; only allow read tools.
+        const assistantMsg: AgentMessage = {
+          role: 'assistant',
+          content: turn.content || null,
+          tool_calls: turn.toolCalls.map((tc) => ({
+            id: tc.id,
+            type: 'function',
+            function: { name: tc.name, arguments: tc.arguments },
+          })),
+        };
+        subMessages.push(assistantMsg);
+        for (const tc of turn.toolCalls) {
+          const name = normalizeToolName(tc.name);
+          const nameKey = name;
+          subCalls.set(nameKey, (subCalls.get(nameKey) || 0) + 1);
+          if (subCalls.get(nameKey)! > 4) break;
+          const def = getTool(name) || this.registry.find((t) => t.name === name);
+          if (def && def.permission === 'read') {
+            let args: Record<string, any>;
+            try { args = JSON.parse(tc.arguments); } catch { args = this.repairArgs(tc.arguments); }
+            const result = await def.run(args).catch((e) => ({ success: false, error: `sub-agent tool error: ${e.message}` }));
+            subMessages.push({ role: 'tool', tool_call_id: tc.id || toolCallId(), content: JSON.stringify(result) });
+          } else {
+            // Non-read tool: block it for the sub-agent (research only).
+            subMessages.push({
+              role: 'tool',
+              tool_call_id: tc.id || toolCallId(),
+              content: JSON.stringify({ success: false, error: `Tool "${name}" is not allowed for research sub-agents (read-only).` }),
+            });
+          }
+        }
+        continue;
+      }
+
+      // Final findings.
+      return (turn.content || '').trim();
+    }
+
+    return '(sub-agent exceeded its exploration budget without a final answer; here is its raw context)';
+  }
+
+  /** System prompt for a research-only sub-agent. */
+  private buildResearchSystemPrompt(): string {
+    return [
+      `You are a RESEARCH sub-agent. You explore a codebase READ-ONLY and report findings.`,
+      `Only these tools are available: read_file, list_files, search_files, project_tree, git_status, git_diff, web_search, web_fetch.`,
+      `You cannot modify anything.`,
+      `Your ONLY job is to answer the user's research question thoroughly and return a concise, well-organized markdown report as your FINAL message.`,
+      `Be specific: cite file paths and line numbers where useful. Do not speculate. If you cannot find something, say so.`,
+    ].join('\n');
+  }
+
+  /** Run a streamTurn against a custom message buffer (for sub-agents). */
+  private async streamTurnWith(messages: AgentMessage[]): Promise<{
+    content: string; reasoning?: string; toolCalls?: { id: string; name: string; arguments: string }[];
+  }> {
+    const client = await this.ensureClient();
+    const controller = new AbortController();
+    this.currentAbortController = controller;
+
+    let content = '';
+    let reasoning = '';
+    const toolDeltas: Record<number, { id?: string; name?: string; args: string }> = {};
+
+    try {
+      const stream = await client.chat.completions.create(
+        {
+          model: this.model,
+          messages: messages as any,
+          tools: toToolSchemas(this.registry),
+          tool_choice: 'auto',
+          temperature: this.temperature,
+          max_tokens: 4000,
+          stream: true,
+        },
+        { signal: controller.signal },
+      );
+      for await (const chunk of stream) {
+        const delta = chunk.choices?.[0]?.delta as any;
+        if (!delta) continue;
+        if (typeof delta.content === 'string') content += delta.content;
+        if (typeof delta.reasoning === 'string') reasoning += delta.reasoning;
+        if (delta.tool_calls) {
+          for (const tc of delta.tool_calls) {
+            const idx = tc.index ?? 0;
+            toolDeltas[idx] ??= { args: '' };
+            if (tc.id) toolDeltas[idx].id = tc.id;
+            if (tc.function?.name) toolDeltas[idx].name = tc.function.name;
+            if (tc.function?.arguments) toolDeltas[idx].args += tc.function.arguments;
+          }
+        }
+      }
+    } catch (e: any) {
+      if (this.isInterrupted) { return { content: '' }; }
+      this.currentAbortController = null;
+      return { content: `(sub-agent request failed: ${this.formatApiError(e)})` };
+    }
+
+    const final: { content: string; reasoning?: string; toolCalls?: { id: string; name: string; arguments: string }[] } = {
+      content, reasoning: reasoning || undefined,
+    };
+    const calls = Object.values(toolDeltas);
+    if (calls.length > 0) {
+      final.toolCalls = calls.map((c) => ({
+        id: c.id || toolCallId(),
+        name: normalizeToolName(c.name || ''),
+        arguments: c.args || '{}',
+      }));
+    }
+    return final;
   }
 
   /** Run a full user turn: stream, run tools, loop until a final text. */
   async chat(userInput: string): Promise<void> {
     this.isInterrupted = false;
     await this.ensureClient();
-    this.messages.push({ role: 'user', content: userInput });
+
+    // PLAN MODE approval: if the user approves a pending plan, drop plan mode
+    // so the model can start executing. Otherwise keep planning.
+    if (this.planMode) {
+      const normalized = userInput.trim().toLowerCase();
+      if (['go', 'proceed', 'ok', 'do it', 'execute', 'yes'].includes(normalized)) {
+        this.planMode = false;
+        this.messages.push({
+          role: 'system',
+          content: 'The user APPROVED the plan. Disabled plan mode. Now execute the plan step by step, using tools. Do what the approved plan says.',
+        });
+        this.messages.push({ role: 'user', content: userInput });
+      } else {
+        this.messages.push({ role: 'user', content: userInput });
+      }
+    } else {
+      this.messages.push({ role: 'user', content: userInput });
+    }
 
     // If over budget before starting, prompt for compaction.
     if (isOverBudget(this.messages) && this.cb.onSummaryRequested) {
@@ -360,6 +568,18 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
         if (this.cb.onMessageEnd) this.cb.onMessageEnd(emptyNote);
         return;
       }
+
+      // PLAN MODE: a final message is the plan. Present it wrapped, and STAY in
+      // plan mode so the user can review before approving execution.
+      if (this.planMode) {
+        const plan = turn.content || '';
+        const planNote = `📋 PLAN MODE — here is the proposed plan:\n\n${plan}\n\nApprove this plan by typing "go" or "proceed". To modify it, describe what to change. Nothing has been changed yet.`;
+        this.messages.push({ role: 'assistant', content: plan });
+        this.messages.push({ role: 'system', content: planNote });
+        if (this.cb.onMessageEnd) this.cb.onMessageEnd(planNote);
+        return;
+      }
+
       if (this.cb.onMessageEnd) this.cb.onMessageEnd(turn.content || '', turn.reasoning);
       this.messages.push({ role: 'assistant', content: turn.content || '' });
       return;
@@ -510,6 +730,21 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
       args = this.repairArgs(rawArgs);
     }
     if (typeof args !== 'object' || args === null) args = {};
+
+    // PLAN MODE: block any write/dangerous tool. The model is only allowed to
+    // explore read-only, then present a plan as its final message.
+    if (this.planMode) {
+      const level = isMcp ? 'write' : def?.permission ?? 'dangerous';
+      if (level !== 'read') {
+        const note = {
+          success: false,
+          error: `Plan mode is on — tool "${toolName}" is blocked. Do NOT modify files or run mutating commands. Keep exploring read-only and present your PLAN as a final message ending with the line "PLAN COMPLETE".`,
+        };
+        this.messages.push({ role: 'tool', tool_call_id: callId ?? toolCallId(), content: JSON.stringify(note) });
+        if (this.cb.onToolEnd) this.cb.onToolEnd(toolName, note);
+        return;
+      }
+    }
 
     if (this.cb.onToolStart) this.cb.onToolStart(toolName, args);
 

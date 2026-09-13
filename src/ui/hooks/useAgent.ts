@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { Agent } from '../../core/agent.js';
+import { getCurrentTasks } from '../../tools/registry.js';
 import type { PermissionDecision } from '../../types.js';
 
 export interface ChatMessage {
@@ -10,6 +11,7 @@ export interface ChatMessage {
   timestamp: Date;
   toolExecution?: ToolExecution;
   type?: string;
+  todoSnapshot?: string;
   usageSnapshot?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -144,6 +146,25 @@ export function useAgent(
             );
             setCurrentToolExecution(null);
             currentExecutionIdRef.current = null;
+
+            // Live todo panel: when the agent creates/updates a task list,
+            // surface it as a checklist message so progress is visible.
+            if (name === 'create_tasks' || name === 'update_tasks') {
+              const tasks = getCurrentTasks();
+              if (tasks && tasks.tasks.length > 0) {
+                const done = tasks.tasks.filter((t) => t.status === 'completed').length;
+                const lines = tasks.tasks.map((t) => {
+                  const icon = t.status === 'completed' ? '✅' : t.status === 'in_progress' ? '🔄' : '⬜';
+                  return `${icon} ${t.description}`;
+                });
+                addMessage({
+                  role: 'system',
+                  type: 'todo',
+                  content: `📋 ${done}/${tasks.tasks.length} — ${tasks.tasks.filter((t) => t.status === 'in_progress').length} in progress`,
+                  todoSnapshot: lines.join('\n'),
+                });
+              }
+            }
           },
           onApiUsage: (usage) => {
             if (onAddApiTokens) onAddApiTokens(usage);
