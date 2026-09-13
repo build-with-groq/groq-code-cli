@@ -119,7 +119,7 @@ AVAILABLE TOOLS
 - MCP tools (if configured) are prefixed with the server name.
 
 WORKFLOW RULES
-1. Use PROJECT_TREE or list_files to orient before changing files.
+1. Use PROJECT_TREE or list_files ONCE to orient before changing files. Do NOT call it again on subsequent turns — you already have its output in your context. Rely on read_file/search_files for specifics.
 2. Always read_file before edit_file; match old_text EXACTLY.
 3. Build incrementally - create the core files first, then iterate.
 4. Prefer SMALL, exact edits over full rewrites.
@@ -293,10 +293,15 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
         this.messages.push(assistantToolMsg);
 
         for (const tc of turn.toolCalls) {
-          const key = `${tc.name}|${tc.arguments}`;
-          repeatedCalls.set(key, (repeatedCalls.get(key) || 0) + 1);
-          if (repeatedCalls.get(key)! > 3) {
-            const msg = `Loop guard: the model repeated the same tool call (${tc.name}) 3+ times with identical arguments. Stopping to avoid an infinite loop. Please simplify the request or read the last tool output before retrying.`;
+          // Guard on the tool NAME primarily: models that keep calling a tool
+          // (e.g. project_tree with no args -> identical args every time) will
+          // loop forever. Count calls per name first, refined by name+args.
+          const nameKey = tc.name;
+          repeatedCalls.set(nameKey, (repeatedCalls.get(nameKey) || 0) + 1);
+          const exactKey = `${tc.name}|${tc.arguments}`;
+          repeatedCalls.set(exactKey, (repeatedCalls.get(exactKey) || 0) + 1);
+          if (repeatedCalls.get(nameKey)! > 3 || repeatedCalls.get(exactKey)! > 4) {
+            const msg = `Loop guard: the model called ${tc.name} ${repeatedCalls.get(nameKey)} times without making progress. Stopping to avoid an infinite loop. Re-reading the same tool output won't help — change the request or ask the user how to continue.`;
             this.messages.push({
               role: 'system',
               content: msg,

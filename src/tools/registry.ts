@@ -211,16 +211,39 @@ async function gitDiff(args: Record<string, any>): Promise<ToolResult> {
   }
 }
 
-/** Directory tree for quick orientation (uses git ls-files when in a repo). */
+/** Compact repository overview: top-level dirs, file counts, and notable files. */
 async function showTree(): Promise<ToolResult> {
+  let files: string[] = [];
   try {
     const { stdout } = await execFileAsync('git', ['ls-files'], { timeout: 10000 });
-    if (stdout) {
-      const lines = stdout.split('\n').filter(Boolean);
-      return success(lines.slice(0, 500), `${lines.length} tracked files`);
-    }
+    if (stdout) files = stdout.split('\n').filter(Boolean);
   } catch { /* not a git repo */ }
-  return listFiles({ directory: '.', show_hidden: false });
+
+  if (files.length === 0) {
+    // Fall back to a shallow directory listing.
+    return listFiles({ directory: '.', dirs_only: false });
+  }
+
+  // Top-level layout: directories and loose files.
+  const topDirs = new Map<string, number>();
+  const loose: string[] = [];
+  for (const f of files) {
+    const parts = f.split('/');
+    if (parts.length === 1) loose.push(f);
+    else topDirs.set(parts[0], (topDirs.get(parts[0]) || 0) + 1);
+  }
+
+  const lines: string[] = [];
+  lines.push(`${files.length} tracked files. Top-level layout:`);
+  if (topDirs.size > 0) {
+    lines.push(...[...topDirs.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([d, n]) => `  ${d}/ (${n} files)`));
+  }
+  for (const f of loose) lines.push(`  ${f}`);
+  if (topDirs.size === 0 && loose.length === 0) lines.push('  (empty repo)');
+
+  return success(lines.join('\n'), 'Repository overview');
 }
 
 const tools = {
