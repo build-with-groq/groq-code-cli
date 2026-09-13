@@ -320,6 +320,15 @@ Identify yourself, when asked, as a coding assistant running on ${this.model} vi
       }
 
       // Final text turn.
+      if (!turn.content && !turn.toolCalls) {
+        // The model produced no content and no tool calls (can happen with
+        // reasoning-heavy models when max_tokens is tight, or on proxy hiccups).
+        // Surface it as an explicit message rather than a silent blank.
+        const emptyNote = 'The model returned an empty response. Try rephrasing the request or using higher max_tokens.';
+        this.messages.push({ role: 'assistant', content: emptyNote });
+        if (this.cb.onMessageEnd) this.cb.onMessageEnd(emptyNote);
+        return;
+      }
       if (this.cb.onMessageEnd) this.cb.onMessageEnd(turn.content || '', turn.reasoning);
       this.messages.push({ role: 'assistant', content: turn.content || '' });
       return;

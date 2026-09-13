@@ -23,7 +23,7 @@ async function withRoot<T>(dir: string, fn: () => Promise<T> | T): Promise<T> {
   }
 }
 
-test('registry exposes all core tools with correct permission levels', (t) => {
+test.serial('registry exposes all core tools with correct permission levels', (t) => {
   const names = getAllTools().map((x) => x.name);
   t.true(names.includes('read_file'));
   t.true(names.includes('edit_file'));
@@ -40,12 +40,12 @@ test('registry exposes all core tools with correct permission levels', (t) => {
   t.is(cmd.permission, 'dangerous');
 });
 
-test('normalizeToolName strips repo_browser prefix', (t) => {
+test.serial('normalizeToolName strips repo_browser prefix', (t) => {
   t.is(normalizeToolName('repo_browser.read_file'), 'read_file');
   t.is(normalizeToolName('read_file'), 'read_file');
 });
 
-test('read_file enforces workspace boundary', async (t) => {
+test.serial('read_file enforces workspace boundary', async (t) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'groq-reg-escape-'));
   fs.writeFileSync(path.join(dir, 'secret.txt'), 'top-secret');
   await withRoot(dir, async () => {
@@ -57,7 +57,7 @@ test('read_file enforces workspace boundary', async (t) => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test('read_file reads content and line slices', async (t) => {
+test.serial('read_file reads content and line slices', async (t) => {
   const dir = tempProject();
   await withRoot(dir, async () => {
     const tool = getTool('read_file')!;
@@ -72,7 +72,7 @@ test('read_file reads content and line slices', async (t) => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test('write_file creates file; edit_file replaces exact text', async (t) => {
+test.serial('write_file creates file; edit_file replaces exact text', async (t) => {
   const dir = tempProject();
   await withRoot(dir, async () => {
     const write = getTool('write_file')!;
@@ -88,7 +88,7 @@ test('write_file creates file; edit_file replaces exact text', async (t) => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test('edit_file append mode with empty old_text', async (t) => {
+test.serial('edit_file append mode with empty old_text', async (t) => {
   const dir = tempProject();
   await withRoot(dir, async () => {
     const edit = getTool('edit_file')!;
@@ -100,7 +100,7 @@ test('edit_file append mode with empty old_text', async (t) => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
-test('search_files finds text', async (t) => {
+test.serial('search_files finds text', async (t) => {
   const dir = tempProject();
   await withRoot(dir, async () => {
     const tool = getTool('search_files')!;
