@@ -1,7 +1,17 @@
 import { Box, Text } from 'ink';
 import { ToolExecution } from '../../hooks/useAgent.js';
 import DiffPreview from './DiffPreview.js';
-import { formatToolParams } from '../../../tools/tools.js';
+
+/** Format the key args of a tool call for display. */
+function formatArgs(args: Record<string, any>): string {
+  const parts = Object.entries(args)
+    .filter(([, v]) => v !== undefined && v !== null)
+    .map(([k, v]) => {
+      const s = typeof v === 'string' ? v : JSON.stringify(v);
+      return `${k}: ${s.length > 80 ? s.slice(0, 77) + '...' : s}`;
+    });
+  return parts.join(' · ');
+}
 
 interface ToolHistoryItemProps {
   execution: ToolExecution;
@@ -80,15 +90,20 @@ export default function ToolHistoryItem({ execution }: ToolHistoryItemProps) {
       );
     }
     
-    // Handle directory tree output for list_files
-    if (toolName === 'list_files') {
+    // Handle directory tree output for list_files / project_tree.
+    // Show a compact summary, not a giant JSON dump.
+    if (toolName === 'list_files' || toolName === 'project_tree') {
       return (
         <Text color="cyan">
-          {typeof content === 'string' ? content : JSON.stringify(content, null, 2)}
+          {typeof content === 'string'
+            ? truncate(content, 600)
+            : Array.isArray(content) && content.length > 12
+              ? `${content.length} entries: ${content.slice(0, 12).join(', ')}${content.length > 12 ? ', …' : ''}`
+              : truncate(JSON.stringify(content, null, 2), 600)}
         </Text>
       );
     }
-    
+
     // Handle file content for read_file; don't show content
     if (toolName === 'read_file') {
       return null;
@@ -99,13 +114,17 @@ export default function ToolHistoryItem({ execution }: ToolHistoryItemProps) {
       return null;
     }
 
-    // Default handling
+    // Default handling — always cap to avoid wall-of-text boxes.
     return (
       <Text color="white">
-        {typeof content === 'string' ? content : JSON.stringify(content, null, 2)}
+        {typeof content === 'string' ? truncate(content, 600) : JSON.stringify(content)}
       </Text>
     );
   };
+
+  function truncate(text: string, max: number): string {
+    return text.length > max ? text.slice(0, max) + '\n… (truncated)' : text;
+  }
 
   return (
     <Box flexDirection="column" borderStyle="round" borderColor={getStatusColor()} paddingX={1}>
@@ -127,11 +146,9 @@ export default function ToolHistoryItem({ execution }: ToolHistoryItemProps) {
             );
           })}
         </Box>
-      ) : formatToolParams(name, args, { includePrefix: false, separator: ': ' }) ? (
+      ) : formatArgs(args) ? (
         <Box>
-          <Text color="gray">
-            {formatToolParams(name, args, { includePrefix: false, separator: ': ' })}
-          </Text>
+          <Text color="gray">{formatArgs(args)}</Text>
         </Box>
       ) : null}
 

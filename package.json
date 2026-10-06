@@ -31,7 +31,7 @@
 		"@sindresorhus/tsconfig": "^3.0.1",
 		"@types/react": "^19.1.8",
 		"@vdemedes/prettier-config": "^2.0.1",
-		"ava": "^5.2.0",
+		"ava": "^6.4.1",
 		"chalk": "^5.2.0",
 		"eslint-config-xo-react": "^0.27.0",
 		"eslint-plugin-react": "^7.32.2",
@@ -40,7 +40,7 @@
 		"prettier": "^2.8.7",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.0.3",
-		"xo": "^1.2.1"
+		"xo": "^5.0.1"
 	},
 	"ava": {
 		"extensions": {
@@ -52,6 +52,7 @@
 		],
 		"files": [
 			"src/**/*.test.ts",
+			"test/**/*.test.ts",
 			"!**/*.d.ts"
 		]
 	},

@@ -25,9 +25,9 @@ test('Agent auto-loads .groq/context.md as system message', async t => {
   const original = { ...process.env };
   (process.env as any).GROQ_CONTEXT_DIR = dir;
   try {
-    const agent = await Agent.create('test-model', 1.0, null, false);
+    const agent = await Agent.create({ model: 'test-model', temperature: 1.0, system: null, debug: false });
     const msgs = (agent as any).messages as Array<{ role: string; content: string }>;
-    const found = msgs.find(m => m.role === 'system' && m.content.includes('Project context loaded from .groq/context.md'));
+    const found = msgs.find(m => m.role === 'system' && m.content.includes('Project context from'));
     t.truthy(found);
     t.true(found!.content.includes('HelloCtx'));
   } finally {
@@ -43,11 +43,11 @@ test('Agent handles missing context gracefully', async t => {
   const original = { ...process.env };
   (process.env as any).GROQ_CONTEXT_DIR = dir;
   try {
-    const agent = await Agent.create('test-model', 1.0, null, false);
+    const agent = await Agent.create({ model: 'test-model', temperature: 1.0, system: null, debug: false });
     const msgs = (agent as any).messages as Array<{ role: string; content: string }>;
     // Should only have the default system message
     t.is(msgs.filter(m => m.role === 'system').length, 1);
-    t.false(msgs[0].content.includes('Project context loaded'));
+    t.false(msgs[0].content.includes('Project context'));
   } finally {
     for (const k of Object.keys(process.env)) delete (process.env as any)[k];
     Object.assign(process.env, original);

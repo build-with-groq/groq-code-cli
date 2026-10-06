@@ -84,6 +84,7 @@ Options:
   -s, --system <message>        Custom system message
   -d, --debug                   Enable debug logging to debug-agent.log in current directory
   -p, --proxy <url>             Proxy URL (e.g. http://proxy:8080 or socks5://proxy:1080)
+  --dangerously-skip-permissions  Skip all permission prompts
   -h, --help                    Display help
   -V, --version                 Display version number
 ```
@@ -131,6 +132,20 @@ Priority: `--proxy` > `HTTPS_PROXY` > `HTTP_PROXY`
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
 - `/stats` - Display session statistics and token usage
+- `/permissions` - Show permission state and persistent allow rules
+- `/mcp` - Show MCP server status and tools
+- `/skills` - List installed skills
+- `/compact` - Summarize and compress long conversations
+
+### Agent Features
+- **Streaming responses** - tokens appear in real time, no more silent hangs.
+- **Tools** - read_file, write_file, edit_file, list_files, search_files, project_tree, execute_command, git_status, git_diff, web_search, web_fetch.
+- **Permission-aware** - reads and safe commands (ls, cat, grep, git status/diff) run automatically; writes and commands ask before running.
+- **Loop guard** - repeated identical tool calls are detected and stopped instead of hanging forever.
+- **Skills** - drop `<name>/SKILL.md` into `.groq/skills/<name>/` (project) or `~/.groq/skills/<name>/` (user).
+- **MCP servers** - configure `~/.groq/mcp.json` to attach external MCP tools:
+  `{ "servers": { "name": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "."] } } }`
+- **Context management** - automatic trimming when the conversation exceeds budget, plus `/compact`.
 
 
 ## Development
@@ -155,19 +170,26 @@ groq-code-cli/
 │   ├── commands/           
 │   │   ├── definitions/        # Individual command implementations
 │   │   │   ├── clear.ts        # Clear chat history command
+│   │   │   ├── compact.ts      # /compact context summarization
 │   │   │   ├── help.ts         # Help command
 │   │   │   ├── login.ts        # Authentication command
+│   │   │   ├── mcp.ts          # MCP server status command
 │   │   │   ├── model.ts        # Model selection command
-│   │   │   └── reasoning.ts    # Reasoning toggle command
+│   │   │   ├── permissions.ts  # /permissions status command
+│   │   │   ├── reasoning.ts    # Reasoning toggle command
+│   │   │   └── skills.ts       # /skills listing command
 │   │   ├── base.ts             # Base command interface
 │   │   └── index.ts            # Command exports
 │   ├── core/               
-│   │   ├── agent.ts            # AI agent implementation
-│   │   └── cli.ts              # CLI entry point and setup
+│   │   ├── agent.ts            # Streaming AI agent + loop guard
+│   │   ├── cli.ts              # CLI entry point and setup
+│   │   ├── context.ts          # Token estimation / auto-trim / /compact
+│   │   ├── mcp.ts              # Stdio MCP client (JSON-RPC)
+│   │   ├── permissions.ts      # Permission engine
+│   │   └── skills.ts           # Skills discovery + loader
 │   ├── tools/              
-│   │   ├── tool-schemas.ts     # Tool schema definitions
-│   │   ├── tools.ts            # Tool implementations
-│   │   └── validators.ts       # Input validation utilities
+│   │   ├── registry.ts         # File/command/git/search tool definitions
+│   │   └── web.ts              # Web search + fetch tools
 │   ├── ui/                 
 │   │   ├── App.tsx             # Main application component
 │   │   ├── components/     
@@ -180,6 +202,7 @@ groq-code-cli/
 │       ├── file-ops.ts         # File system operations
 │       ├── local-settings.ts   # Local configuration management
 │       └── markdown.ts         # Markdown processing utilities
+├── test/                   # ava test suite
 ├── docs/                   
 ├── package.json    
 ├── tsconfig.json        

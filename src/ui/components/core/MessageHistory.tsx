@@ -113,7 +113,17 @@ export default function MessageHistory({ messages, showReasoning = true, usageDa
             </Box>
           );
         }
-        
+
+        // Live todo checklist from the agent's create_tasks/update_tasks tools.
+        if (message.type === 'todo') {
+          return (
+            <Box key={message.id} marginBottom={1} flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
+              <Text bold color="cyan">{message.content}</Text>
+              <Text color="white">{message.todoSnapshot}</Text>
+            </Box>
+          );
+        }
+
         return (
           <Box key={message.id} marginBottom={1}>
             <Text color="yellow" italic>

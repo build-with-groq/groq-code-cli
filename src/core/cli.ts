@@ -62,7 +62,14 @@ async function startChat(
   
   try {
     // Create agent (API key will be checked on first message)
-    const agent = await Agent.create(defaultModel, temperature, system, debug, proxy);
+    const agent = await Agent.create({
+      model: defaultModel,
+      temperature,
+      system,
+      debug,
+      proxy,
+      skipPermissions: program.opts().dangerouslySkipPermissions,
+    });
 
     render(React.createElement(App, { agent }));
   } catch (error) {
@@ -79,6 +86,7 @@ program
   .option('-s, --system <message>', 'Custom system message')
   .option('-d, --debug', 'Enable debug logging to debug-agent.log in current directory')
   .option('-p, --proxy <url>', 'Proxy URL (e.g. http://proxy:8080 or socks5://proxy:1080)')
+  .option('--dangerously-skip-permissions', 'Skip all permission prompts (like --force in some CLIs)')
   .action(async (options) => {
     await startChat(
       options.temperature,
