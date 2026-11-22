@@ -13,7 +13,7 @@ import ModelSelector from '../input-overlays/ModelSelector.js';
 import MaxIterationsContinue from '../input-overlays/MaxIterationsContinue.js';
 import ErrorRetry from '../input-overlays/ErrorRetry.js';
 import { handleSlashCommand } from '../../../commands/index.js';
-import { loadSession } from '../../../utils/sessions.js';
+import { loadSession, formatTokens } from '../../../utils/sessions.js';
 
 interface ChatProps {
   agent: Agent;
@@ -325,10 +325,20 @@ export default function Chat({ agent }: ChatProps) {
             <Text color="cyan" bold>auto-approve edits is on</Text>
           )}
         </Box>
-        <Box>
-          <Text color="gray" dimColor>
-            {agent.getCurrentModel?.() || ''}
-          </Text>
+        <Box gap={1}>
+          <Text color="gray" dimColor>{agent.getCurrentModel?.() || ''}</Text>
+          {sessionStats.totalRequests > 0 && (
+            <>
+              <Text color="gray" dimColor>|</Text>
+              <Text color="cyan">{formatTokens(sessionStats.promptTokens)}</Text>
+              <Text color="gray" dimColor>in</Text>
+              <Text color="green">{formatTokens(sessionStats.completionTokens)}</Text>
+              <Text color="gray" dimColor>out</Text>
+              <Text color="gray" dimColor>|</Text>
+              <Text color="yellow">{formatTokens(sessionStats.totalTokens)}</Text>
+              <Text color="gray" dimColor>total</Text>
+            </>
+          )}
         </Box>
       </Box>
     </Box>
