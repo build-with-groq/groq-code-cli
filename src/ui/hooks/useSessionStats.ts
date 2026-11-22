@@ -15,8 +15,8 @@ interface SessionStats {
   totalTime: number;
 }
 
-export function useSessionStats() {
-  const [sessionStats, setSessionStats] = useState<SessionStats>({
+export function useSessionStats(initial?: SessionStats) {
+  const [sessionStats, setSessionStats] = useState<SessionStats>(initial || {
     promptTokens: 0,
     completionTokens: 0,
     totalTokens: 0,
@@ -50,5 +50,6 @@ export function useSessionStats() {
     sessionStats,
     addSessionTokens,
     clearSessionStats,
+    restoreSessionStats: setSessionStats,
   };
 }

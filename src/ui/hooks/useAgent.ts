@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { Agent } from '../../core/agent.js';
 import { DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../../tools/tool-schemas.js';
+import { SessionData } from '../../utils/sessions.js';
 
 export interface ChatMessage {
   id: string;
@@ -31,6 +32,37 @@ export interface ToolExecution {
   needsApproval?: boolean;
 }
 
+// Rebuild what the chat view shows from the raw messages sent to the model.
+// Tool calls are collapsed to one line each, their output isn't replayed.
+function historyToChatMessages(history: any[]): ChatMessage[] {
+  const result: ChatMessage[] = [];
+  let n = 0;
+  const push = (msg: Omit<ChatMessage, 'id' | 'timestamp'>) => {
+    result.push({ ...msg, id: `restored-${n++}`, timestamp: new Date() });
+  };
+
+  for (const msg of history) {
+    if (msg.role === 'user') {
+      push({ role: 'user', content: msg.content });
+    } else if (msg.role === 'assistant') {
+      if (msg.content) {
+        push({ role: 'assistant', content: msg.content });
+      }
+      for (const call of msg.tool_calls || []) {
+        let target = '';
+        try {
+          const args = JSON.parse(call.function.arguments);
+          target = args.file_path || args.command || args.pattern || args.directory || '';
+        } catch {
+          // ignore bad args
+        }
+        push({ role: 'system', content: `ran ${call.function.name}${target ? ` (${target})` : ''}` });
+      }
+    }
+  }
+  return result;
+}
+
 export function useAgent(
   agent: Agent, 
   onStartRequest?: () => void,
@@ -39,8 +71,11 @@ export function useAgent(
   onResumeRequest?: () => void,
   onCompleteRequest?: () => void
 ) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [userMessageHistory, setUserMessageHistory] = useState<string[]>([]);
+  // agent may already hold a resumed session (groq --continue)
+  const [messages, setMessages] = useState<ChatMessage[]>(() => historyToChatMessages(agent.getHistory()));
+  const [userMessageHistory, setUserMessageHistory] = useState<string[]>(() =>
+    agent.getHistory().filter(m => m.role === 'user').map(m => m.content)
+  );
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentToolExecution, setCurrentToolExecution] = useState<ToolExecution | null>(null);
   const [sessionAutoApprove, setSessionAutoApprove] = useState(false);
@@ -350,6 +385,12 @@ export function useAgent(
     agent.clearHistory();
   }, [agent]);
 
+  const restoreSession = useCallback((session: SessionData) => {
+    agent.resumeSession(session);
+    setMessages(historyToChatMessages(session.messages));
+    setUserMessageHistory(session.messages.filter(m => m.role === 'user').map(m => m.content));
+  }, [agent]);
+
   const interruptRequest = useCallback(() => {
     agent.interrupt();
     setIsProcessing(false);
@@ -383,6 +424,7 @@ export function useAgent(
     addMessage,
     setApiKey,
     clearHistory,
+    restoreSession,
     toggleAutoApprove,
     toggleReasoning,
     interruptRequest,

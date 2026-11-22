@@ -13,6 +13,7 @@ import ModelSelector from '../input-overlays/ModelSelector.js';
 import MaxIterationsContinue from '../input-overlays/MaxIterationsContinue.js';
 import ErrorRetry from '../input-overlays/ErrorRetry.js';
 import { handleSlashCommand } from '../../../commands/index.js';
+import { loadSession } from '../../../utils/sessions.js';
 
 interface ChatProps {
   agent: Agent;
@@ -38,7 +39,8 @@ export default function Chat({ agent }: ChatProps) {
     sessionStats,
     addSessionTokens,
     clearSessionStats,
-  } = useSessionStats();
+    restoreSessionStats,
+  } = useSessionStats(agent.getSessionUsage());
 
   // Wrapper function to add tokens to both per-request and session totals
   const handleApiTokens = (usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number }) => {
@@ -72,6 +74,7 @@ export default function Chat({ agent }: ChatProps) {
     addMessage,
     setApiKey,
     clearHistory,
+    restoreSession,
     toggleAutoApprove,
     toggleReasoning,
     interruptRequest,
@@ -82,6 +85,17 @@ export default function Chat({ agent }: ChatProps) {
   const [showInput, setShowInput] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const [sessionId, setSessionId] = useState(agent.getSessionId());
+
+  // Started with --continue / --resume
+  useEffect(() => {
+    if (agent.getHistory().length > 0) {
+      addMessage({
+        role: 'system',
+        content: `Resumed session ${agent.getSessionId()}. Run /sessions to see others.`,
+      });
+    }
+  }, []);
 
   // Handle global keyboard shortcuts
   useInput((input, key) => {
@@ -137,7 +151,10 @@ export default function Chat({ agent }: ChatProps) {
           clearHistory: () => {
             clearHistory();
             clearSessionStats();
+            setSessionId(agent.getSessionId());
           },
+          resumeSession: handleResume,
+          currentSessionId: sessionId,
           setShowLogin,
           setShowModelSelector,
           toggleReasoning,
@@ -150,6 +167,25 @@ export default function Chat({ agent }: ChatProps) {
       // The agent will handle starting request tracking
       await sendMessage(message);
     }
+  };
+
+  const handleResume = (id: string) => {
+    const session = loadSession(id);
+    if (!session) {
+      addMessage({
+        role: 'system',
+        content: `Session "${id}" not found. Run /sessions to see saved sessions.`,
+      });
+      return;
+    }
+    restoreSession(session);
+    restoreSessionStats(agent.getSessionUsage());
+    resetMetrics();
+    setSessionId(session.id);
+    addMessage({
+      role: 'system',
+      content: `Resumed session ${session.id} (${session.title})`,
+    });
   };
 
   const handleApproval = (approved: boolean, autoApproveSession?: boolean) => {
@@ -187,6 +223,7 @@ export default function Chat({ agent }: ChatProps) {
     // Clear chat history and session stats when switching models
     clearHistory();
     clearSessionStats();
+    setSessionId(agent.getSessionId());
     // Set the new model on the agent
     agent.setModel(model);
     addMessage({
@@ -282,10 +319,11 @@ export default function Chat({ agent }: ChatProps) {
       </Box>
 
       <Box justifyContent="space-between" paddingX={1}>
-        <Box>
-          <Text color="cyan" bold>
-            {sessionAutoApprove ? 'auto-approve edits is on' : ''}
-          </Text>
+        <Box gap={2}>
+          <Text color="gray" dimColor>session {sessionId}</Text>
+          {sessionAutoApprove && (
+            <Text color="cyan" bold>auto-approve edits is on</Text>
+          )}
         </Box>
         <Box>
           <Text color="gray" dimColor>

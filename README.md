@@ -84,6 +84,8 @@ Options:
   -s, --system <message>        Custom system message
   -d, --debug                   Enable debug logging to debug-agent.log in current directory
   -p, --proxy <url>             Proxy URL (e.g. http://proxy:8080 or socks5://proxy:1080)
+  -c, --continue                Continue the most recent session in this directory
+  -r, --resume <id>             Resume a saved session by id
   -h, --help                    Display help
   -V, --version                 Display version number
 ```
@@ -131,6 +133,18 @@ Priority: `--proxy` > `HTTPS_PROXY` > `HTTP_PROXY`
 - `/clear` - Clear chat history and context
 - `/reasoning` - Toggle display of reasoning content in messages
 - `/stats` - Display session statistics and token usage
+- `/sessions` - List saved sessions for this directory (`/sessions all` for every directory)
+- `/resume <id>` - Resume a saved session
+
+### Sessions
+Conversations are saved to `~/.groq/sessions/` after every turn, together with their token usage. Pick up where you left off with:
+
+```bash
+groq --continue          # latest session in the current directory
+groq --resume <id>       # a specific session, a unique prefix of the id is enough
+```
+
+Inside the chat, `/sessions` lists them and `/resume <id>` switches to one. `/clear` and switching models start a new session. Set `GROQ_SESSIONS_DIR` to store sessions somewhere else.
 
 
 ## Development
