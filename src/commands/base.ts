@@ -1,9 +1,12 @@
 export interface CommandContext {
+  args?: string;
   addMessage: (message: any) => void;
   clearHistory: () => void;
   setShowLogin: (show: boolean) => void;
   setShowModelSelector?: (show: boolean) => void;
   toggleReasoning?: () => void;
+  resumeSession?: (id: string) => void;
+  currentSessionId?: string;
   showReasoning?: boolean;
   sessionStats?: {
     promptTokens: number;

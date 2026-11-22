@@ -5,6 +5,7 @@ import { validateReadBeforeEdit, getReadBeforeEditError } from '../tools/validat
 import { ALL_TOOL_SCHEMAS, DANGEROUS_TOOLS, APPROVAL_REQUIRED_TOOLS } from '../tools/tool-schemas.js';
 import { ConfigManager } from '../utils/local-settings.js';
 import { getProxyAgent, getProxyInfo } from '../utils/proxy-config.js';
+import { SessionData, SessionUsage, emptyUsage, newSessionId, saveSession, makeTitle } from '../utils/sessions.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -36,6 +37,11 @@ export class Agent {
   private requestCount: number = 0;
   private currentAbortController: AbortController | null = null;
   private isInterrupted: boolean = false;
+  private sessionId: string = newSessionId();
+  private sessionCreatedAt: string = new Date().toISOString();
+  private sessionUsage: SessionUsage = emptyUsage();
+  // system prompt + optional project context, everything after this is the conversation
+  private baseMessageCount: number = 0;
 
   private constructor(
     model: string,
@@ -82,6 +88,8 @@ export class Agent {
         debugLog('Failed to load project context:', error);
       }
     }
+
+    this.baseMessageCount = this.messages.length;
   }
 
   static async create(
@@ -215,8 +223,51 @@ When asked about your identity, you should identify yourself as a coding assista
   }
 
   public clearHistory(): void {
-    // Reset messages to only contain system messages
-    this.messages = this.messages.filter(msg => msg.role === 'system');
+    // Keep only the base system messages and start a fresh session
+    this.messages = this.messages.slice(0, this.baseMessageCount);
+    this.sessionId = newSessionId();
+    this.sessionCreatedAt = new Date().toISOString();
+    this.sessionUsage = emptyUsage();
+  }
+
+  public getSessionId(): string {
+    return this.sessionId;
+  }
+
+  public getSessionUsage(): SessionUsage {
+    return { ...this.sessionUsage };
+  }
+
+  public getHistory(): Message[] {
+    return this.messages.slice(this.baseMessageCount);
+  }
+
+  public resumeSession(session: SessionData): void {
+    this.messages = [...this.messages.slice(0, this.baseMessageCount), ...session.messages];
+    this.sessionId = session.id;
+    this.sessionCreatedAt = session.createdAt;
+    this.sessionUsage = { ...emptyUsage(), ...session.usage };
+  }
+
+  private persistSession(): void {
+    const history = this.getHistory();
+    const firstUser = history.find(m => m.role === 'user');
+    if (!firstUser) return;
+
+    try {
+      saveSession({
+        id: this.sessionId,
+        cwd: process.cwd(),
+        model: this.model,
+        title: makeTitle(firstUser.content),
+        createdAt: this.sessionCreatedAt,
+        updatedAt: new Date().toISOString(),
+        usage: this.sessionUsage,
+        messages: history,
+      });
+    } catch (error) {
+      debugLog('Failed to save session:', error);
+    }
   }
 
   public setModel(model: string): void {
@@ -258,6 +309,14 @@ When asked about your identity, you should identify yourself as a coding assista
   }
 
   async chat(userInput: string): Promise<void> {
+    try {
+      await this.runChat(userInput);
+    } finally {
+      this.persistSession();
+    }
+  }
+
+  private async runChat(userInput: string): Promise<void> {
     // Reset interrupt flag at the start of a new chat
     this.isInterrupted = false;
     
@@ -352,6 +411,14 @@ When asked about your identity, you should identify yourself as a coding assista
           // Extract reasoning if present
           const reasoning = (message as any).reasoning;
           
+          if (response.usage) {
+            this.sessionUsage.promptTokens += response.usage.prompt_tokens;
+            this.sessionUsage.completionTokens += response.usage.completion_tokens;
+            this.sessionUsage.totalTokens += response.usage.total_tokens;
+            this.sessionUsage.totalRequests += 1;
+            this.sessionUsage.totalTime += response.usage.total_time || 0;
+          }
+
           // Pass usage data to callback if available
           if (response.usage && this.onApiUsage) {
             this.onApiUsage({
@@ -414,6 +481,9 @@ When asked about your identity, you should identify yourself as a coding assista
                 return;
               }
             }
+
+            // Save progress so long tool runs aren't lost if the process is killed
+            this.persistSession();
 
             // Continue loop to get model response to tool results
             iteration++;

@@ -5,6 +5,7 @@ import { render } from 'ink';
 import React from 'react';
 import { Agent } from './agent.js';
 import App from '../ui/App.js';
+import { SessionData, latestSession, loadSession } from '../utils/sessions.js';
 
 const program = new Command();
 
@@ -19,12 +20,14 @@ const program = new Command();
  * @param system - Optional system message to seed the agent's context; pass `null` to use defaults.
  * @param debug - When true, enables debug logging for the agent.
  * @param proxy - Optional proxy URL to route requests through (e.g., `http://proxy:8080` or `socks5://proxy:1080`).
+ * @param resume - `true` to continue the latest session in this directory, or a session id to resume.
  */
 async function startChat(
   temperature: number,
   system: string | null,
   debug?: boolean,
-  proxy?: string
+  proxy?: string,
+  resume?: string | boolean
 ): Promise<void> {
   console.log(chalk.hex('#FF4500')(`                             
   ██████    ██████   ██████   ██████
@@ -60,9 +63,22 @@ async function startChat(
     }
   }
   
+  let session: SessionData | null = null;
+  if (resume) {
+    session = resume === true ? latestSession() : loadSession(resume);
+    if (!session) {
+      console.log(chalk.yellow(resume === true
+        ? 'No previous session found for this directory, starting a new one.'
+        : `Session "${resume}" not found, starting a new one.`));
+    }
+  }
+
   try {
     // Create agent (API key will be checked on first message)
     const agent = await Agent.create(defaultModel, temperature, system, debug, proxy);
+    if (session) {
+      agent.resumeSession(session);
+    }
 
     render(React.createElement(App, { agent }));
   } catch (error) {
@@ -79,12 +95,15 @@ program
   .option('-s, --system <message>', 'Custom system message')
   .option('-d, --debug', 'Enable debug logging to debug-agent.log in current directory')
   .option('-p, --proxy <url>', 'Proxy URL (e.g. http://proxy:8080 or socks5://proxy:1080)')
+  .option('-c, --continue', 'Continue the most recent session in this directory')
+  .option('-r, --resume <id>', 'Resume a saved session by id (see /sessions)')
   .action(async (options) => {
     await startChat(
       options.temperature,
       options.system || null,
       options.debug,
-      options.proxy
+      options.proxy,
+      options.resume || options.continue
     );
   });
 
